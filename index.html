@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>บันทึกออมเงิน 💸</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- FontAwesome & Google Fonts -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: { 50: '#fdfbf7', 100: '#f7f3ec', 200: '#efe6d8', 300: '#e3d2be', 400: '#d2b89d' },
+            emerald: { 50: '#ecfdf5', 100: '#d1fae5', 500: '#10b981', 600: '#059669', 700: '#047857', 800: '#065f46' }
+          },
+          fontFamily: { sans: ['"Sarabun"', '"Plus Jakarta Sans"', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #f7f3ec;
+      background-image: radial-gradient(#e3d2be 0.75px, transparent 0.75px);
+      background-size: 16px 16px;
+      min-height: 100vh;
+      color: #2d3748;
+      font-family: 'Sarabun', 'Plus Jakarta Sans', sans-serif;
+      touch-action: manipulation;
+    }
+    .cream-card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(227, 210, 190, 0.6);
+      box-shadow: 0 10px 30px -5px rgba(184, 160, 130, 0.12), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
+    }
+    .cream-input { background: #fdfbf7; border: 1px solid #efe6d8; color: #2d3748; }
+    .cream-input:focus { border-color: #059669; box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12); outline: none; }
+    .calendar-day { min-height: 76px; transition: all 0.2s ease; }
+    .calendar-day:active { transform: scale(0.96); }
+    .income-pill { background: #ecfdf5; border: 1px solid #a7f3d0; color: #047857; }
+    .today-ring { box-shadow: 0 0 0 2px #059669, 0 4px 12px rgba(5, 150, 105, 0.2); }
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: #f7f3ec; }
+    ::-webkit-scrollbar-thumb { background: #d2b89d; border-radius: 4px; }
+  </style>
+</head>
+<body class="pb-24">
+
+  <section id="authScreen" class="min-h-screen flex items-center justify-center p-4">
+    <div class="cream-card rounded-3xl p-6 w-full max-w-md space-y-4">
+      <div class="text-center">
+        <div class="mx-auto mb-3 w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-600 to-emerald-500 flex items-center justify-center text-white text-2xl"><i class="fa-solid fa-piggy-bank"></i></div>
+        <h1 class="text-xl font-extrabold text-gray-800">บันทึกออมเงิน 💸</h1>
+        <p class="text-sm text-gray-500 mt-1">เข้าสู่ระบบเพื่อเข้าถึงข้อมูลการเงินส่วนตัว</p>
+      </div>
+      <div id="authMessage" role="status" class="hidden rounded-xl p-3 text-sm"></div>
+      <form id="authForm" class="space-y-3">
+        <label class="block text-xs font-semibold text-gray-600">อีเมล<input id="authEmail" type="email" autocomplete="email" required class="w-full cream-input rounded-xl px-3 py-3 mt-1" placeholder="you@example.com"></label>
+        <label id="passwordLabel" class="block text-xs font-semibold text-gray-600">รหัสผ่าน<input id="authPassword" type="password" autocomplete="current-password" minlength="8" required class="w-full cream-input rounded-xl px-3 py-3 mt-1" placeholder="อย่างน้อย 8 ตัวอักษร"></label>
+        <button id="authSubmit" type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl">เข้าสู่ระบบ</button>
+      </form>
+      <div class="grid grid-cols-2 gap-2">
+        <button id="toggleSignup" type="button" class="rounded-xl border border-cream-300 py-2 text-xs font-semibold text-emerald-800">สร้างบัญชี</button>
+        <button id="resetPassword" type="button" class="rounded-xl border border-cream-300 py-2 text-xs font-semibold text-gray-600">ลืมรหัสผ่าน</button>
+      </div>
+      <p class="text-[11px] text-gray-400 text-center">ข้อมูลถูกแยกตามบัญชีและป้องกันด้วยสิทธิ์ฐานข้อมูล</p>
+    </div>
+  </section>
+
+  <div id="appShell" class="hidden">
+  <!-- Header -->
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-cream-200 px-4 py-3 shadow-sm">
+    <div class="max-w-6xl mx-auto flex justify-between items-center">
+      <div class="flex items-center gap-2.5">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-emerald-500 flex items-center justify-center text-white shadow-md shadow-emerald-600/20">
+          <i class="fa-solid fa-piggy-bank text-lg"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg leading-tight text-gray-800 tracking-tight">บันทึกออมเงิน 💸</h1>
+          <p id="signedInLabel" class="text-[10px] text-emerald-700 font-semibold uppercase tracking-wider">ข้อมูลส่วนตัว • ฐานข้อมูลออนไลน์</p>
+        </div>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="exportCSV()" class="text-xs text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-xl border border-emerald-200 transition-all font-medium flex items-center gap-1">
+          <i class="fa-solid fa-file-arrow-down"></i> <span class="hidden sm:inline">ส่งออก CSV</span>
+        </button>
+        <button onclick="signOut()" class="text-xs text-gray-600 bg-gray-50 hover:bg-gray-100 px-3 py-1.5 rounded-xl border border-gray-200 transition-all font-medium">ออกจากระบบ</button>
+        <button onclick="clearAllData()" class="text-xs text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 px-3 py-1.5 rounded-xl border border-rose-200 transition-all font-medium">
+          <i class="fa-solid fa-rotate-left"></i> <span class="hidden sm:inline">รีเซ็ต</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 pt-4">
+    <!-- Responsive Layout: Mobile 1 column, Desktop 2 columns -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+      
+      <!-- LEFT COLUMN -->
+      <div class="md:col-span-7 space-y-4">
+        <!-- Balance Summary -->
+        <div class="cream-card rounded-3xl p-5 relative overflow-hidden">
+          <p class="text-xs text-gray-500 font-medium mb-1">ยอดเงินคงเหลือสุทธิ</p>
+          <div class="text-3xl font-extrabold tracking-tight text-gray-800 mb-4" id="netBalanceDisplay">฿0.00</div>
+          <div class="grid grid-cols-2 gap-3 pt-3 border-t border-cream-200">
+            <div class="bg-emerald-50/80 rounded-2xl p-3 border border-emerald-100">
+              <div class="flex items-center gap-1.5 text-emerald-700 text-xs font-semibold mb-1">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> รายรับรวม
+              </div>
+              <div class="text-base font-bold text-emerald-800" id="totalIncomeDisplay">฿0.00</div>
+            </div>
+            <div class="bg-rose-50/80 rounded-2xl p-3 border border-rose-100">
+              <div class="flex items-center gap-1.5 text-rose-600 text-xs font-semibold mb-1">
+                <span class="w-2 h-2 rounded-full bg-rose-400"></span> รายจ่ายรวม
+              </div>
+              <div class="text-base font-bold text-rose-700" id="totalExpenseDisplay">฿0.00</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="flex bg-white p-1 rounded-2xl border border-cream-200 text-xs font-semibold shadow-sm">
+          <button onclick="switchTab('calendar')" id="tab-calendar" class="flex-1 py-2.5 rounded-xl transition-all text-center flex items-center justify-center gap-1.5 bg-emerald-600 text-white font-bold shadow-sm">
+            <i class="fa-regular fa-calendar-days"></i> ปฏิทินรายรับ
+          </button>
+          <button onclick="switchTab('analytics')" id="tab-analytics" class="flex-1 py-2.5 rounded-xl transition-all text-center flex items-center justify-center gap-1.5 text-gray-600 hover:text-gray-900">
+            <i class="fa-solid fa-chart-column"></i> สรุป & กราฟ
+          </button>
+          <button onclick="switchTab('recurring')" id="tab-recurring" class="flex-1 py-2.5 rounded-xl transition-all text-center flex items-center justify-center gap-1.5 text-gray-600 hover:text-gray-900">
+            <i class="fa-solid fa-rotate"></i> รายการประจำ
+          </button>
+        </div>
+
+        <!-- TAB 1: CALENDAR -->
+        <section id="view-calendar" class="space-y-4">
+          <div class="cream-card rounded-3xl p-4">
+            <div class="flex items-center justify-between mb-4">
+              <button onclick="changeMonth(-1)" class="w-8 h-8 rounded-xl bg-cream-100 text-gray-600 hover:bg-cream-200 flex items-center justify-center transition-all">
+                <i class="fa-solid fa-chevron-left text-xs"></i>
+              </button>
+              <div class="text-center">
+                <h2 class="font-bold text-base text-gray-800" id="calendarMonthYearDisplay">เดือนปี</h2>
+                <p class="text-[11px] text-emerald-700 font-semibold" id="monthSummaryPill">รายรับเดือนนี้ ฿0</p>
+              </div>
+              <button onclick="changeMonth(1)" class="w-8 h-8 rounded-xl bg-cream-100 text-gray-600 hover:bg-cream-200 flex items-center justify-center transition-all">
+                <i class="fa-solid fa-chevron-right text-xs"></i>
+              </button>
+            </div>
+            <div class="grid grid-cols-7 gap-1 text-center text-[11px] font-semibold text-gray-400 mb-2">
+              <div class="text-rose-500">อา</div><div>จ</div><div>อ</div><div>พ</div><div>พฤ</div><div>ศ</div><div class="text-emerald-600">ส</div>
+            </div>
+            <div class="grid grid-cols-7 gap-1" id="calendarGrid"></div>
+          </div>
+        </section>
+
+        <!-- TAB 2: ANALYTICS -->
+        <section id="view-analytics" class="space-y-4 hidden">
+          <div class="cream-card rounded-3xl p-4">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-bold text-sm text-gray-800 flex items-center gap-2">
+                <i class="fa-solid fa-chart-simple text-emerald-600"></i> แนวโน้มการเงิน
+              </h3>
+              <div class="flex bg-cream-100 p-0.5 rounded-xl text-[11px] font-semibold">
+                <button onclick="setChartPeriod('weekly')" id="btn-period-weekly" class="px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-bold shadow-sm">รายสัปดาห์</button>
+                <button onclick="setChartPeriod('monthly')" id="btn-period-monthly" class="px-2.5 py-1 rounded-lg text-gray-600 hover:text-gray-900">รายเดือน</button>
+              </div>
+            </div>
+            <div class="h-64 w-full"><canvas id="trendChart"></canvas></div>
+          </div>
+        </section>
+
+        <!-- TAB 3: RECURRING -->
+        <section id="view-recurring" class="space-y-4 hidden">
+          <div class="cream-card rounded-3xl p-4">
+            <div class="flex justify-between items-center mb-2">
+              <h3 class="font-bold text-sm text-gray-800 flex items-center gap-2">
+                <i class="fa-solid fa-arrows-rotate text-emerald-600"></i> รายการประจำรายเดือน
+              </h3>
+              <button onclick="openRecurringModal()" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-xl shadow-sm transition-all">+ เพิ่มรายการ</button>
+            </div>
+            <p class="text-xs text-gray-500 mb-3">ค่าน้ำ ค่าไฟ ค่าบริการประจำ ตัดจ่ายในคลิกเดียว</p>
+            <div id="recurringList" class="space-y-2 text-xs"></div>
+          </div>
+        </section>
+      </div>
+
+      <!-- RIGHT COLUMN (Desktop Dashboard Side) -->
+      <div class="md:col-span-5 space-y-4">
+        <!-- Category Breakdown -->
+        <div class="cream-card rounded-3xl p-4">
+          <h3 class="font-bold text-sm text-gray-800 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-pie-chart text-emerald-600"></i> สัดส่วนรายจ่ายตามหมวดหมู่
+          </h3>
+          <div id="categoryBreakdownList" class="space-y-2.5 text-xs"></div>
+        </div>
+
+        <!-- Recent Transactions -->
+        <div class="space-y-2">
+          <div class="flex justify-between items-center pt-2">
+            <h3 class="font-bold text-sm text-gray-700">ประวัติรายการบันทึก</h3>
+            <span class="text-[11px] text-gray-400 font-medium" id="transactionCountDisplay">0 รายการ</span>
+          </div>
+          <div id="recentTransactionsList" class="space-y-2 max-h-[450px] overflow-y-auto pr-1"></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Floating Add Button -->
+  <button onclick="openAddModal()" class="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center text-2xl shadow-xl shadow-emerald-600/30 hover:scale-105 active:scale-95 transition-all z-30">
+    <i class="fa-solid fa-plus"></i>
+  </button>
+
+  <!-- Modal: Add New Transaction -->
+  <div id="addModal" class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
+    <div class="cream-card w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl p-5 space-y-4">
+      <div class="flex justify-between items-center">
+        <h3 class="font-bold text-base text-gray-800">บันทึกรายการใหม่</h3>
+        <button onclick="closeAddModal()" class="w-8 h-8 rounded-full bg-cream-100 text-gray-500 hover:text-gray-800 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="grid grid-cols-2 gap-2 p-1 bg-cream-100 rounded-2xl">
+        <button type="button" onclick="setTransactionType('income')" id="btn-type-income" class="py-2.5 rounded-xl font-bold text-xs transition-all bg-emerald-600 text-white shadow-sm">+ รายรับ (Income)</button>
+        <button type="button" onclick="setTransactionType('expense')" id="btn-type-expense" class="py-2.5 rounded-xl font-bold text-xs transition-all text-gray-600">- รายจ่าย (Expense)</button>
+      </div>
+      <form id="transactionForm" onsubmit="handleFormSubmit(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block text-gray-600 mb-1 font-medium">จำนวนเงิน (บาท)</label>
+          <input type="number" step="0.01" id="inputAmount" required placeholder="0.00" class="w-full cream-input rounded-2xl px-4 py-3 text-lg font-bold text-emerald-700">
+        </div>
+        <div>
+          <label class="block text-gray-600 mb-1 font-medium">รายละเอียด / โน้ต</label>
+          <input type="text" id="inputTitle" required placeholder="เช่น เงินเดือน, ค่าอาหาร" class="w-full cream-input rounded-2xl px-4 py-2.5">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-gray-600 mb-1 font-medium">หมวดหมู่</label>
+            <select id="inputCategory" class="w-full cream-input rounded-2xl px-3 py-2.5">
+              <option value="salary">💰 เงินเดือน/รายได้</option>
+              <option value="food">🍱 อาหาร & เครื่องดื่ม</option>
+              <option value="transport">🚗 เดินทาง</option>
+              <option value="bills">💡 ค่าน้ำ/ค่าไฟ/เน็ต</option>
+              <option value="shopping">🛍️ ช้อปปิ้ง</option>
+              <option value="other">📦 อื่นๆ</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-gray-600 mb-1 font-medium">วันที่ & เวลา</label>
+            <input type="datetime-local" id="inputDateTime" required class="w-full cream-input rounded-2xl px-3 py-2.5">
+          </div>
+        </div>
+        <button type="submit" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl shadow-lg shadow-emerald-600/20 active:scale-98 transition-all text-sm mt-2">บันทึกรายการ</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Day Details -->
+  <div id="dayDetailModal" class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="cream-card w-full max-w-sm rounded-3xl p-5 space-y-4">
+      <div class="flex justify-between items-center pb-2 border-b border-cream-200">
+        <div>
+          <h3 class="font-bold text-base text-gray-800" id="dayDetailTitle">วันที่</h3>
+          <p class="text-xs text-gray-500">สรุปรายการวันนี้</p>
+        </div>
+        <button onclick="closeDayDetailModal()" class="w-8 h-8 rounded-full bg-cream-100 text-gray-500 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div id="dayDetailList" class="space-y-2 max-h-60 overflow-y-auto pr-1"></div>
+      <button onclick="openAddForSelectedDay()" class="w-full py-2.5 bg-cream-100 hover:bg-cream-200 text-emerald-800 rounded-xl font-bold text-xs transition-all">+ เพิ่มรายการในวันนี้</button>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://daxukbbarrcrdkbwzlkg.supabase.co';
+    const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_jwf8Gn_q1MxrusGYXOZgyQ_Vkbbf4eu';
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+    let transactions = [], recurringItems = [], currentUser = null, authMode = 'signin';
+    let currentDate = new Date(), selectedMonth = currentDate.getMonth(), selectedYear = currentDate.getFullYear();
+    let currentType = 'income', chartPeriod = 'weekly', selectedCalendarDay = null, chartInstance = null, selectedDayTransactions = [];
+    const categories = {
+      salary:{name:'เงินเดือน/รายได้',icon:'fa-wallet',color:'#10b981'}, food:{name:'อาหาร & เครื่องดื่ม',icon:'fa-utensils',color:'#f59e0b'},
+      transport:{name:'เดินทาง',icon:'fa-car',color:'#3b82f6'}, bills:{name:'ค่าน้ำ/ค่าไฟ/เน็ต',icon:'fa-bolt',color:'#ec4899'},
+      shopping:{name:'ช้อปปิ้ง',icon:'fa-bag-shopping',color:'#8b5cf6'}, other:{name:'อื่นๆ',icon:'fa-box',color:'#64748b'}
+    };
+    const money = n => '฿' + Number(n || 0).toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2});
+    const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const dateOnly = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    function showAuthMessage(message, error=false) { const el=document.getElementById('authMessage'); el.textContent=message; el.className=`rounded-xl p-3 text-sm ${error?'bg-rose-50 text-rose-700':'bg-emerald-50 text-emerald-800'}`; }
+    function setAuthMode(mode) { authMode=mode; document.getElementById('authSubmit').textContent=mode==='signup'?'สร้างบัญชี':mode==='reset'?'ส่งลิงก์รีเซ็ตรหัสผ่าน':'เข้าสู่ระบบ'; document.getElementById('passwordLabel').classList.toggle('hidden',mode==='reset'); document.getElementById('authPassword').required=mode!=='reset'; document.getElementById('authPassword').autocomplete=mode==='signup'?'new-password':'current-password'; document.getElementById('toggleSignup').textContent=mode==='signup'?'กลับไปเข้าสู่ระบบ':'สร้างบัญชี'; }
+    document.getElementById('toggleSignup').addEventListener('click',()=>setAuthMode(authMode==='signup'?'signin':'signup'));
+    document.getElementById('resetPassword').addEventListener('click',()=>setAuthMode(authMode==='reset'?'signin':'reset'));
+    document.getElementById('authForm').addEventListener('submit',async e=>{
+      e.preventDefault(); const email=document.getElementById('authEmail').value.trim().toLowerCase(), password=document.getElementById('authPassword').value;
+      const btn=document.getElementById('authSubmit'); btn.disabled=true; btn.textContent='กำลังดำเนินการ…';
+      try {
+        if(authMode==='signup') { const {data,error}=await db.auth.signUp({email,password}); if(error) throw error; showAuthMessage(data.session?'สร้างบัญชีสำเร็จ':'สร้างบัญชีแล้ว หากเปิดยืนยันอีเมล โปรดตรวจกล่องจดหมายก่อนเข้าสู่ระบบ'); if(data.session) await enterApp(data.session.user); }
+        else if(authMode==='reset') { const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo:location.origin}); if(error) throw error; showAuthMessage('ส่งลิงก์รีเซ็ตรหัสผ่านแล้ว โปรดตรวจอีเมล'); }
+        else { const {data,error}=await db.auth.signInWithPassword({email,password}); if(error) throw error; await enterApp(data.user); }
+      } catch(err) { showAuthMessage(err.message || 'ดำเนินการไม่สำเร็จ กรุณาลองใหม่',true); }
+      finally { btn.disabled=false; setAuthMode(authMode); }
+    });
+    async function enterApp(user) { currentUser=user; document.getElementById('authScreen').classList.add('hidden'); document.getElementById('appShell').classList.remove('hidden'); document.getElementById('signedInLabel').textContent='บัญชี: '+(user.email||'ผู้ใช้'); setDefaultDateTime(); await loadData(); }
+    async function signOut() { const {error}=await db.auth.signOut(); if(error){alert('ออกจากระบบไม่สำเร็จ: '+error.message);return;} transactions=[];recurringItems=[];currentUser=null;document.getElementById('appShell').classList.add('hidden');document.getElementById('authScreen').classList.remove('hidden');document.getElementById('authEmail').value='';document.getElementById('authPassword').value='';setAuthMode('signin'); }
+    db.auth.onAuthStateChange((event,session)=>{ if(session?.user && !currentUser) { setTimeout(()=>enterApp(session.user),0); } else if(!session?.user && currentUser) { currentUser=null; transactions=[]; recurringItems=[]; document.getElementById('appShell').classList.add('hidden'); document.getElementById('authScreen').classList.remove('hidden'); } });
+    document.addEventListener('DOMContentLoaded',async()=>{ const {data:{session}}=await db.auth.getSession(); if(session?.user) await enterApp(session.user); });
+    async function loadData() {
+      if(!currentUser) return;
+      try {
+        const [tr,rr]=await Promise.all([
+          db.from('finance_transactions').select('id,transaction_type,title,amount,category,transaction_at,transaction_date,recurring_expense_id,occurrence_month,notes').order('transaction_at',{ascending:false}),
+          db.from('finance_recurring_expenses').select('id,title,amount,category,day_of_month,notes,is_active').eq('is_active',true).order('created_at',{ascending:false})
+        ]);
+        if(tr.error) throw tr.error; if(rr.error) throw rr.error;
+        transactions=(tr.data||[]).map(t=>({id:t.id,type:t.transaction_type,amount:Number(t.amount),title:t.title,category:t.category,datetime:t.transaction_at,transaction_date:t.transaction_date,recurring_expense_id:t.recurring_expense_id,occurrence_month:t.occurrence_month,notes:t.notes}));
+        recurringItems=(rr.data||[]).map(t=>({id:t.id,title:t.title,amount:Number(t.amount),category:t.category,dayOfMonth:t.day_of_month,notes:t.notes})); renderApp();
+      } catch(err) { alert('โหลดข้อมูลจากฐานข้อมูลไม่สำเร็จ: '+(err.message||'กรุณาลองใหม่')); }
+    }
+    function renderApp(){updateTotals();renderCalendar();renderRecentTransactions();renderCategoryBreakdown();renderRecurringList();if(!document.getElementById('view-analytics').classList.contains('hidden'))renderChart();}
+    function setDefaultDateTime(){const now=new Date();now.setMinutes(now.getMinutes()-now.getTimezoneOffset());document.getElementById('inputDateTime').value=now.toISOString().slice(0,16);}
+    function updateTotals(){let inc=0,exp=0;transactions.forEach(t=>{if(t.type==='income')inc+=t.amount;else exp+=t.amount;});document.getElementById('netBalanceDisplay').textContent=money(inc-exp);document.getElementById('totalIncomeDisplay').textContent=money(inc);document.getElementById('totalExpenseDisplay').textContent=money(exp);}
+    function renderCalendar(){const months=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];document.getElementById('calendarMonthYearDisplay').textContent=`${months[selectedMonth]} ${selectedYear+543}`;const grid=document.getElementById('calendarGrid');grid.replaceChildren();const first=new Date(selectedYear,selectedMonth,1).getDay(),days=new Date(selectedYear,selectedMonth+1,0).getDate(),today=new Date();for(let i=0;i<first;i++){const e=document.createElement('div');e.className='calendar-day rounded-2xl bg-cream-100/40 border border-cream-200/30 opacity-40';grid.appendChild(e);}let monthIncome=0;for(let day=1;day<=days;day++){const cell=document.createElement('div'),isToday=today.getFullYear()===selectedYear&&today.getMonth()===selectedMonth&&today.getDate()===day;const list=transactions.filter(t=>{const d=new Date(t.datetime);return d.getFullYear()===selectedYear&&d.getMonth()===selectedMonth&&d.getDate()===day;});let inc=0,exp=0;list.forEach(t=>t.type==='income'?inc+=t.amount:exp+=t.amount);monthIncome+=inc;cell.className=`calendar-day rounded-2xl p-1.5 flex flex-col justify-between border cursor-pointer relative overflow-hidden transition-all ${isToday?'bg-white border-emerald-500 today-ring':'bg-white/80 border-cream-200 hover:border-emerald-300'}`;cell.innerHTML=`<div class="flex justify-between items-center w-full"><span class="text-xs font-bold ${isToday?'text-emerald-700':'text-gray-700'}">${day}</span>${isToday?'<span class="text-[9px] bg-emerald-600 text-white font-bold px-1 rounded-md">วันนี้</span>':''}</div><div class="space-y-0.5 mt-1">${inc>0?`<div class="income-pill rounded-lg px-1 py-0.5 text-[10px] font-bold truncate text-center">+${inc>=1000?(inc/1000).toFixed(1)+'k':inc}</div>`:''}${exp>0?`<div class="text-[9px] text-rose-600 font-medium truncate text-center">-${exp>=1000?(exp/1000).toFixed(1)+'k':exp}</div>`:''}</div>`;cell.onclick=()=>openDayDetail(day,list);grid.appendChild(cell);}document.getElementById('monthSummaryPill').textContent=`รายรับเดือนนี้ ${money(monthIncome)}`;}
+    function changeMonth(delta){const d=new Date(selectedYear,selectedMonth+delta,1);selectedMonth=d.getMonth();selectedYear=d.getFullYear();renderApp();}
+    function renderRecentTransactions(){const list=document.getElementById('recentTransactionsList');document.getElementById('transactionCountDisplay').textContent=`${transactions.length} รายการ`;if(!transactions.length){list.innerHTML='<div class="cream-card rounded-2xl p-6 text-center text-gray-400 text-xs"><i class="fa-solid fa-receipt text-2xl mb-2 text-gray-300"></i><p>ยังไม่มีรายการบันทึก</p></div>';return;}list.innerHTML=[...transactions].sort((a,b)=>new Date(b.datetime)-new Date(a.datetime)).map(t=>{const cat=categories[t.category]||categories.other,d=new Date(t.datetime),dateStr=`${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()+543} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`,income=t.type==='income';return `<div class="cream-card rounded-2xl p-3 flex items-center justify-between"><div class="flex items-center gap-3 min-w-0"><div class="w-10 h-10 shrink-0 rounded-xl flex items-center justify-center text-sm" style="background:${cat.color}15;color:${cat.color};border:1px solid ${cat.color}30"><i class="fa-solid ${cat.icon}"></i></div><div class="min-w-0"><h4 class="font-bold text-xs text-gray-800 break-words">${escapeHTML(t.title)}</h4><p class="text-[10px] text-gray-400">${dateStr} • ${cat.name}</p></div></div><div class="flex items-center gap-2 shrink-0"><span class="font-bold text-xs ${income?'text-emerald-600':'text-rose-600'}">${income?'+':'-'}${money(t.amount)}</span><button onclick="deleteTransaction('${t.id}')" class="text-gray-300 hover:text-rose-500 p-1 text-xs" aria-label="ลบรายการ"><i class="fa-solid fa-trash"></i></button></div></div>`;}).join('');}
+    function setChartPeriod(period){chartPeriod=period;document.getElementById('btn-period-weekly').className=period==='weekly'?'px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-bold shadow-sm':'px-2.5 py-1 rounded-lg text-gray-600 hover:text-gray-900';document.getElementById('btn-period-monthly').className=period==='monthly'?'px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-bold shadow-sm':'px-2.5 py-1 rounded-lg text-gray-600 hover:text-gray-900';renderChart();}
+    function renderChart(){const ctx=document.getElementById('trendChart').getContext('2d');if(chartInstance)chartInstance.destroy();let labels=[],incomeData=[],expenseData=[];if(chartPeriod==='weekly'){for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);labels.push(`${d.getDate()}/${d.getMonth()+1}`);let inc=0,exp=0;transactions.forEach(t=>{const td=new Date(t.datetime);if(td.getFullYear()===d.getFullYear()&&td.getMonth()===d.getMonth()&&td.getDate()===d.getDate())t.type==='income'?inc+=t.amount:exp+=t.amount;});incomeData.push(inc);expenseData.push(exp);}}else{const mn=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];for(let i=5;i>=0;i--){const d=new Date();d.setDate(1);d.setMonth(d.getMonth()-i);labels.push(mn[d.getMonth()]);let inc=0,exp=0;transactions.forEach(t=>{const td=new Date(t.datetime);if(td.getFullYear()===d.getFullYear()&&td.getMonth()===d.getMonth())t.type==='income'?inc+=t.amount:exp+=t.amount;});incomeData.push(inc);expenseData.push(exp);}}chartInstance=new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'รายรับ',data:incomeData,backgroundColor:'#10b981',borderRadius:6},{label:'รายจ่าย',data:expenseData,backgroundColor:'#f43f5e',borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#374151',font:{family:'Sarabun',size:11}}}},scales:{x:{ticks:{color:'#6b7280',font:{size:10}},grid:{display:false}},y:{beginAtZero:true,ticks:{color:'#6b7280',font:{size:10}},grid:{color:'rgba(227,210,190,0.4)'}}}}});}
+    function renderCategoryBreakdown(){const c=document.getElementById('categoryBreakdownList'),ex=transactions.filter(t=>t.type==='expense'),total=ex.reduce((s,t)=>s+t.amount,0);if(!total){c.innerHTML='<p class="text-center text-gray-400 py-3">ยังไม่มีข้อมูลรายจ่าย</p>';return;}const totals={};ex.forEach(t=>totals[t.category]=(totals[t.category]||0)+t.amount);c.innerHTML=Object.entries(totals).map(([key,amt])=>{const cat=categories[key]||categories.other,pct=Math.round(amt/total*100);return `<div class="space-y-1"><div class="flex justify-between text-xs"><span class="text-gray-700 font-medium flex items-center gap-1.5"><i class="fa-solid ${cat.icon}" style="color:${cat.color}"></i>${cat.name}</span><span class="font-bold text-gray-800">${money(amt)} (${pct}%)</span></div><div class="w-full bg-cream-100 rounded-full h-2 overflow-hidden border border-cream-200"><div class="h-full rounded-full" style="width:${pct}%;background:${cat.color}"></div></div></div>`;}).join('');}
+    function renderRecurringList(){const c=document.getElementById('recurringList');if(!recurringItems.length){c.innerHTML='<p class="text-center text-gray-400 py-3">ยังไม่มีรายการประจำ</p>';return;}c.innerHTML=recurringItems.map(item=>{const cat=categories[item.category]||categories.other;return `<div class="cream-card rounded-2xl p-3 flex items-center justify-between gap-2"><div class="flex items-center gap-2.5 min-w-0"><div class="w-8 h-8 shrink-0 rounded-xl flex items-center justify-center text-xs" style="background:${cat.color}15;color:${cat.color}"><i class="fa-solid ${cat.icon}"></i></div><div class="min-w-0"><h4 class="font-bold text-gray-800 break-words">${escapeHTML(item.title)}</h4><p class="text-[10px] text-gray-400">ทุกวันที่ ${item.dayOfMonth} ของเดือน</p></div></div><div class="flex items-center gap-2 shrink-0"><span class="font-bold text-rose-600">${money(item.amount)}</span><button onclick="executeRecurring('${item.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] px-2 py-1 rounded-lg">ลงบัญชี</button><button onclick="deleteRecurring('${item.id}')" class="text-gray-400 hover:text-rose-600" aria-label="ลบรายการประจำ"><i class="fa-solid fa-trash"></i></button></div></div>`;}).join('');}
+    async function openRecurringModal(){const title=prompt('ชื่อรายการประจำ (เช่น ค่าน้ำ ค่าไฟ ค่าอินเทอร์เน็ต):');if(title===null)return;const clean=title.trim();if(!clean||clean.length>160){alert('ชื่อรายการต้องมี 1–160 ตัวอักษร');return;}const raw=prompt('จำนวนเงิน (บาท):');if(raw===null)return;const amount=Number(raw);if(!Number.isFinite(amount)||amount<=0){alert('จำนวนเงินต้องมากกว่า 0');return;}const day=Number(prompt('ตัดจ่ายวันที่เท่าไหร่ของเดือน (1-31):','1'));if(!Number.isInteger(day)||day<1||day>31){alert('วันที่ต้องอยู่ระหว่าง 1–31');return;}const {error}=await db.from('finance_recurring_expenses').insert({title:clean,amount,day_of_month:day,category:'bills'});if(error){alert('บันทึกรายการประจำไม่สำเร็จ: '+error.message);return;}await loadData();}
+    async function executeRecurring(id){const item=recurringItems.find(x=>x.id===id);if(!item)return;const now=new Date(),month=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-01`,day=dateOnly(now);const {error}=await db.from('finance_transactions').insert({transaction_type:'expense',title:item.title+' (รายการประจำ)',amount:item.amount,category:item.category,transaction_date:day,transaction_at:now.toISOString(),recurring_expense_id:item.id,occurrence_month:month});if(error){alert(error.code==='23505'?'รายการประจำนี้ถูกลงบัญชีไปแล้วในเดือนนี้':'ลงบัญชีไม่สำเร็จ: '+error.message);return;}await loadData();alert(`ลงบันทึก ${item.title} ${money(item.amount)} เรียบร้อยแล้ว`);}
+    async function deleteRecurring(id){if(!confirm('ลบรายการประจำนี้ใช่หรือไม่? รายการที่เคยลงบัญชีแล้วจะไม่ถูกลบ'))return;const {error}=await db.from('finance_recurring_expenses').delete().eq('id',id);if(error){alert('ลบไม่สำเร็จ: '+error.message);return;}await loadData();}
+    function switchTab(tab){['calendar','analytics','recurring'].forEach(t=>{document.getElementById(`view-${t}`).classList.add('hidden');document.getElementById(`tab-${t}`).className='flex-1 py-2.5 rounded-xl transition-all text-center flex items-center justify-center gap-1.5 text-gray-600 hover:text-gray-900';});document.getElementById(`view-${tab}`).classList.remove('hidden');document.getElementById(`tab-${tab}`).className='flex-1 py-2.5 rounded-xl transition-all text-center flex items-center justify-center gap-1.5 bg-emerald-600 text-white font-bold shadow-sm';if(tab==='analytics')renderChart();}
+    function setTransactionType(type){currentType=type;document.getElementById('btn-type-income').className=type==='income'?'py-2.5 rounded-xl font-bold text-xs transition-all bg-emerald-600 text-white shadow-sm':'py-2.5 rounded-xl font-bold text-xs transition-all text-gray-600';document.getElementById('btn-type-expense').className=type==='expense'?'py-2.5 rounded-xl font-bold text-xs transition-all bg-rose-500 text-white shadow-sm':'py-2.5 rounded-xl font-bold text-xs transition-all text-gray-600';}
+    function openAddModal(){setDefaultDateTime();document.getElementById('addModal').classList.remove('hidden');}function closeAddModal(){document.getElementById('addModal').classList.add('hidden');}
+    async function handleFormSubmit(e){e.preventDefault();const amount=Number(document.getElementById('inputAmount').value),title=document.getElementById('inputTitle').value.trim(),category=document.getElementById('inputCategory').value,dt=document.getElementById('inputDateTime').value;if(!Number.isFinite(amount)||amount<=0){alert('จำนวนเงินต้องมากกว่า 0');return;}if(!title||title.length>160){alert('รายละเอียดต้องมี 1–160 ตัวอักษร');return;}const date=new Date(dt);if(!dt||Number.isNaN(date.getTime())){alert('กรุณาเลือกวันที่และเวลาที่ถูกต้อง');return;}const {error}=await db.from('finance_transactions').insert({transaction_type:currentType,amount,title,category,transaction_at:date.toISOString(),transaction_date:dateOnly(date)});if(error){alert('บันทึกรายการไม่สำเร็จ: '+error.message);return;}closeAddModal();document.getElementById('transactionForm').reset();setDefaultDateTime();await loadData();}
+    async function deleteTransaction(id){if(!confirm('ต้องการลบรายการนี้ใช่หรือไม่?'))return;const {error}=await db.from('finance_transactions').delete().eq('id',id);if(error){alert('ลบรายการไม่สำเร็จ: '+error.message);return;}await loadData();}
+    async function clearAllData(){if(!confirm('ลบรายการรายรับรายจ่ายทั้งหมดของบัญชีนี้ใช่หรือไม่? การลบนี้ย้อนกลับไม่ได้'))return;if(!confirm('ยืนยันอีกครั้ง: ต้องการลบข้อมูลการเงินทั้งหมดจริงหรือไม่?'))return;const a=await db.from('finance_transactions').delete().not('id','is',null);if(a.error){alert('ลบรายการไม่สำเร็จ: '+a.error.message);return;}const b=await db.from('finance_recurring_expenses').delete().not('id','is',null);if(b.error){alert('ลบรายการประจำไม่สำเร็จ: '+b.error.message);return;}await loadData();}
+    function openDayDetail(day,list){selectedCalendarDay=day;selectedDayTransactions=list;const months=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];document.getElementById('dayDetailTitle').textContent=`วันที่ ${day} ${months[selectedMonth]} ${selectedYear+543}`;const c=document.getElementById('dayDetailList');if(!list.length)c.innerHTML='<p class="text-center text-gray-400 py-4 text-xs">ไม่มีรายการในวันนี้</p>';else c.innerHTML=list.map(t=>{const income=t.type==='income',d=new Date(t.datetime);return `<div class="bg-cream-100/60 p-2.5 rounded-xl flex justify-between items-center border border-cream-200 gap-2"><div><p class="font-bold text-xs text-gray-800">${escapeHTML(t.title)}</p><p class="text-[10px] text-gray-400">${d.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})}</p></div><span class="font-bold text-xs ${income?'text-emerald-600':'text-rose-600'}">${income?'+':'-'}${money(t.amount)}</span></div>`;}).join('');document.getElementById('dayDetailModal').classList.remove('hidden');}
+    function closeDayDetailModal(){document.getElementById('dayDetailModal').classList.add('hidden');}
+    function openAddForSelectedDay(){closeDayDetailModal();const date=new Date(selectedYear,selectedMonth,selectedCalendarDay,12,0);date.setMinutes(date.getMinutes()-date.getTimezoneOffset());document.getElementById('inputDateTime').value=date.toISOString().slice(0,16);openAddModal();}
+    function exportCSV(){const header=['type','title','amount','category','datetime','notes'];const rows=transactions.map(t=>[t.type,t.title,t.amount,t.category,t.datetime,t.notes||'']);const csv=[header,...rows].map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='finance-backup-'+dateOnly(new Date())+'.csv';a.click();URL.revokeObjectURL(url);}
+  </script>
+  </div>
+</body>
+</html>
