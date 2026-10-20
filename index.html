@@ -381,40 +381,9 @@
           <div id="savingsMissionsList" class="space-y-2.5"></div>
         </section>
 
-        <!-- Hosting & Storage Status -->
-        <section class="cream-card rounded-3xl p-4" aria-labelledby="serverInfoTitle">
-          <div class="flex items-start justify-between gap-3 mb-3">
-            <div>
-              <h3 id="serverInfoTitle" class="font-bold text-sm text-gray-800 flex items-center gap-2"><i class="fa-solid fa-server text-emerald-600"></i> สถานะเซิร์ฟเวอร์</h3>
-              <p class="text-[10px] text-gray-400 mt-1">ข้อมูลโฮสต์และพื้นที่ที่ตรวจสอบได้</p>
-            </div>
-            <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-100 px-2 py-1 text-[10px] font-bold text-emerald-700"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> ออนไลน์</span>
-          </div>
-          <div class="space-y-3 text-xs">
-            <div class="flex items-start justify-between gap-3">
-              <span class="text-gray-500"><i class="fa-solid fa-globe w-4 text-center mr-1"></i> เว็บโฮสต์</span>
-              <span class="text-right font-semibold text-gray-700">Vercel · Managed</span>
-            </div>
-            <div class="flex items-start justify-between gap-3">
-              <span class="text-gray-500"><i class="fa-solid fa-database w-4 text-center mr-1"></i> ฐานข้อมูล</span>
-              <span class="text-right font-semibold text-gray-700">Supabase · Free</span>
-            </div>
-            <div class="pt-3 border-t border-cream-200">
-              <div class="flex items-center justify-between gap-2 mb-1.5"><span class="font-semibold text-gray-600">พื้นที่ฐานข้อมูล</span><span class="font-extrabold text-emerald-700">11 / 500 MB</span></div>
-              <div class="h-2 rounded-full bg-cream-100 overflow-hidden"><div class="h-full rounded-full bg-emerald-500" style="width:2.2%"></div></div>
-              <p class="mt-1 text-[10px] text-gray-400">ใช้ประมาณ 2.2% ของโควตาฐานข้อมูล Free</p>
-            </div>
-            <div class="pt-3 border-t border-cream-200">
-              <div class="flex items-center justify-between gap-2 mb-1.5"><span class="font-semibold text-gray-600">พื้นที่เก็บไฟล์ (Storage)</span><span class="font-extrabold text-emerald-700">0 / 1 GB</span></div>
-              <div class="h-2 rounded-full bg-cream-100 overflow-hidden"><div class="h-full rounded-full bg-amber-400" style="width:0%"></div></div>
-              <p class="mt-1 text-[10px] text-gray-400">ตรวจพบไฟล์ 0 รายการใน Supabase Storage</p>
-            </div>
-            <div class="rounded-2xl bg-cream-50 border border-cream-200 p-3 space-y-2">
-              <div class="flex items-center justify-between gap-3"><span class="text-gray-500">CPU / RAM</span><span class="text-right font-semibold text-gray-700">ไม่มีตัวเลขให้ดูในเว็บ</span></div>
-              <p class="text-[10px] leading-relaxed text-gray-400">Vercel จัดการเครื่องโฮสต์ให้ ส่วน CPU/RAM ของฐานข้อมูลต้องดูจากหน้า Compute ของ Supabase ไม่ควรเดาตัวเลข</p>
-            </div>
-            <p class="text-[10px] text-gray-400">ขนาดฐานข้อมูลและจำนวนไฟล์เป็นค่าที่ตรวจล่าสุด 20 ต.ค. 2026 ไม่ใช่มิเตอร์เรียลไทม์</p>
-          </div>
+        <!-- Database Usage -->
+        <section class="cream-card rounded-3xl p-4" aria-label="สถานะฐานข้อมูล">
+          <p class="text-sm font-bold text-emerald-700"><i class="fa-solid fa-database mr-2"></i>Database: 11 / 500 MB</p>
         </section>
 
         <!-- Recent Transactions -->
