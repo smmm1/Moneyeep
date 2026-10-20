@@ -389,9 +389,45 @@
     async function executeRecurring(id){const item=recurringItems.find(x=>x.id===id);if(!item)return;const now=new Date(),month=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-01`,day=dateOnly(now);const {error}=await db.from('finance_transactions').insert({transaction_type:'expense',title:item.title+' (รายการประจำ)',amount:item.amount,category:item.category,transaction_date:day,transaction_at:now.toISOString(),recurring_expense_id:item.id,occurrence_month:month});if(error){alert(error.code==='23505'?'รายการประจำนี้ถูกลงบัญชีไปแล้วในเดือนนี้':'ลงบัญชีไม่สำเร็จ: '+error.message);return;}await loadData();alert(`ลงบันทึก ${item.title} ${money(item.amount)} เรียบร้อยแล้ว`);}
     async function deleteRecurring(id){if(!confirm('ลบรายการประจำนี้ใช่หรือไม่? รายการที่เคยลงบัญชีแล้วจะไม่ถูกลบ'))return;const {error}=await db.from('finance_recurring_expenses').delete().eq('id',id);if(error){alert('ลบไม่สำเร็จ: '+error.message);return;}await loadData();}
     function switchTab(tab){['calendar','analytics','recurring'].forEach(t=>{document.getElementById(`view-${t}`).classList.add('hidden');document.getElementById(`tab-${t}`).className='flex-1 py-2.5 rounded-xl transition-all text-center flex items-center justify-center gap-1.5 text-gray-600 hover:text-gray-900';});document.getElementById(`view-${tab}`).classList.remove('hidden');document.getElementById(`tab-${tab}`).className='flex-1 py-2.5 rounded-xl transition-all text-center flex items-center justify-center gap-1.5 bg-emerald-600 text-white font-bold shadow-sm';if(tab==='analytics')renderChart();}
+    // Sound effects: lightweight Web Audio tones, no audio files or extra dependencies.
+    let soundContext = null;
+    let soundEnabled = true;
+    function playSoundTone(frequency, duration, volume, delay=0) {
+      if (!soundEnabled) return;
+      try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return;
+        if (!soundContext) soundContext = new AudioContextClass();
+        if (soundContext.state === 'suspended') soundContext.resume();
+        const start = soundContext.currentTime + delay;
+        const oscillator = soundContext.createOscillator();
+        const gain = soundContext.createGain();
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(frequency, start);
+        gain.gain.setValueAtTime(0.0001, start);
+        gain.gain.exponentialRampToValueAtTime(volume, start + 0.012);
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+        oscillator.connect(gain);
+        gain.connect(soundContext.destination);
+        oscillator.start(start);
+        oscillator.stop(start + duration + 0.02);
+      } catch (_) { /* Audio is optional; never interrupt app actions. */ }
+    }
+    function playButtonSound() { playSoundTone(620, 0.055, 0.018); }
+    function playIncomeSound() {
+      playSoundTone(784, 0.13, 0.035, 0);
+      playSoundTone(988, 0.15, 0.032, 0.09);
+      playSoundTone(1175, 0.22, 0.03, 0.19);
+    }
+    // Delegation also covers buttons rendered later by the app.
+    document.addEventListener('click', event => {
+      const button = event.target.closest('button');
+      if (button && !button.disabled) playButtonSound();
+    }, true);
+
     function setTransactionType(type){currentType=type;document.getElementById('btn-type-income').className=type==='income'?'py-2.5 rounded-xl font-bold text-xs transition-all bg-emerald-600 text-white shadow-sm':'py-2.5 rounded-xl font-bold text-xs transition-all text-gray-600';document.getElementById('btn-type-expense').className=type==='expense'?'py-2.5 rounded-xl font-bold text-xs transition-all bg-rose-500 text-white shadow-sm':'py-2.5 rounded-xl font-bold text-xs transition-all text-gray-600';}
     function openAddModal(){setDefaultDateTime();document.getElementById('addModal').classList.remove('hidden');}function closeAddModal(){document.getElementById('addModal').classList.add('hidden');}
-    async function handleFormSubmit(e){e.preventDefault();const amount=Number(document.getElementById('inputAmount').value),title=document.getElementById('inputTitle').value.trim(),category=document.getElementById('inputCategory').value,dt=document.getElementById('inputDateTime').value;if(!Number.isFinite(amount)||amount<=0){alert('จำนวนเงินต้องมากกว่า 0');return;}if(!title||title.length>160){alert('รายละเอียดต้องมี 1–160 ตัวอักษร');return;}const date=new Date(dt);if(!dt||Number.isNaN(date.getTime())){alert('กรุณาเลือกวันที่และเวลาที่ถูกต้อง');return;}const {error}=await db.from('finance_transactions').insert({transaction_type:currentType,amount,title,category,transaction_at:date.toISOString(),transaction_date:dateOnly(date)});if(error){alert('บันทึกรายการไม่สำเร็จ: '+error.message);return;}closeAddModal();document.getElementById('transactionForm').reset();setDefaultDateTime();await loadData();renderSavingsGoal();renderSavingsMissions();triggerSaveCelebration();}
+    async function handleFormSubmit(e){e.preventDefault();const amount=Number(document.getElementById('inputAmount').value),title=document.getElementById('inputTitle').value.trim(),category=document.getElementById('inputCategory').value,dt=document.getElementById('inputDateTime').value;if(!Number.isFinite(amount)||amount<=0){alert('จำนวนเงินต้องมากกว่า 0');return;}if(!title||title.length>160){alert('รายละเอียดต้องมี 1–160 ตัวอักษร');return;}const date=new Date(dt);if(!dt||Number.isNaN(date.getTime())){alert('กรุณาเลือกวันที่และเวลาที่ถูกต้อง');return;}const {error}=await db.from('finance_transactions').insert({transaction_type:currentType,amount,title,category,transaction_at:date.toISOString(),transaction_date:dateOnly(date)});if(error){alert('บันทึกรายการไม่สำเร็จ: '+error.message);return;}if(currentType==='income')playIncomeSound();closeAddModal();document.getElementById('transactionForm').reset();setDefaultDateTime();await loadData();renderSavingsGoal();renderSavingsMissions();triggerSaveCelebration();}
     async function deleteTransaction(id){if(!confirm('ต้องการลบรายการนี้ใช่หรือไม่?'))return;const {error}=await db.from('finance_transactions').delete().eq('id',id);if(error){alert('ลบรายการไม่สำเร็จ: '+error.message);return;}await loadData();}
     async function clearAllData(){if(!confirm('ลบรายการรายรับรายจ่ายทั้งหมดของบัญชีนี้ใช่หรือไม่? การลบนี้ย้อนกลับไม่ได้'))return;if(!confirm('ยืนยันอีกครั้ง: ต้องการลบข้อมูลการเงินทั้งหมดจริงหรือไม่?'))return;const a=await db.from('finance_transactions').delete().not('id','is',null);if(a.error){alert('ลบรายการไม่สำเร็จ: '+a.error.message);return;}const b=await db.from('finance_recurring_expenses').delete().not('id','is',null);if(b.error){alert('ลบรายการประจำไม่สำเร็จ: '+b.error.message);return;}const c=await db.from('finance_savings_goals').delete().eq('user_id',currentUser.id);if(c.error){alert('ลบเป้าหมายออมเงินไม่สำเร็จ: '+c.error.message);return;}savingsGoal={name:'เงินเก็บของฉัน',target:0};try{localStorage.removeItem(getGoalStorageKey());}catch(_){}await loadData();}
     function openDayDetail(day,list){selectedCalendarDay=day;selectedDayTransactions=list;const months=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];document.getElementById('dayDetailTitle').textContent=`วันที่ ${day} ${months[selectedMonth]} ${selectedYear+543}`;const c=document.getElementById('dayDetailList');if(!list.length)c.innerHTML='<p class="text-center text-gray-400 py-4 text-xs">ไม่มีรายการในวันนี้</p>';else c.innerHTML=list.map(t=>{const income=t.type==='income',d=new Date(t.datetime);return `<div class="bg-cream-100/60 p-2.5 rounded-xl flex justify-between items-center border border-cream-200 gap-2"><div><p class="font-bold text-xs text-gray-800">${escapeHTML(t.title)}</p><p class="text-[10px] text-gray-400">${d.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})}</p></div><span class="font-bold text-xs ${income?'text-emerald-600':'text-rose-600'}">${income?'+':'-'}${money(t.amount)}</span></div>`;}).join('');document.getElementById('dayDetailModal').classList.remove('hidden');}
