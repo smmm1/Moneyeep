@@ -120,6 +120,44 @@
     }
     @media (max-width:380px) { .auth-screen { padding:8px; }.auth-welcome { padding:17px 18px 14px; }.auth-form-side { padding:22px 18px 18px; }.auth-hero-art { height:125px; }.auth-welcome-copy h1 { font-size:24px; }.auth-floating-note { transform:scale(.9) rotate(2deg);transform-origin:right bottom; } }
     @media (prefers-reduced-motion:reduce) { .auth-piggy img { animation:none; } }
+
+    /* Desktop login composition: form + full finance dashboard preview */
+    .auth-layout { width:min(100%,1220px);min-height:720px;grid-template-columns:minmax(350px,.78fr) minmax(0,1.22fr); }
+    .auth-form-side { order:1;padding:clamp(34px,4vw,64px); }
+    .auth-welcome { order:2;padding:clamp(30px,3.4vw,48px); }
+    .auth-welcome-copy { margin-top:8px; }
+    .auth-welcome-copy h1 { font-size:clamp(30px,3vw,39px); }
+    .auth-hero-art { display:none; }
+    .auth-desktop-preview { display:block;margin-top:26px;padding:17px 18px 13px;border:1px solid rgba(255,255,255,.92);border-radius:22px;background:rgba(255,255,255,.8);box-shadow:0 12px 34px rgba(66,100,56,.1);transform:rotate(-.6deg); }
+    .auth-preview-top { display:flex;align-items:center;gap:9px;padding-bottom:13px;border-bottom:1px solid #edf1e8;color:#7e8e7b;font-size:9px;font-weight:700; }
+    .auth-preview-top>i { margin-left:auto;color:#a3b09e; }
+    .auth-preview-window-dots { display:flex;gap:4px; }.auth-preview-window-dots i { width:6px;height:6px;border-radius:50%;background:#efc5b5; }.auth-preview-window-dots i:nth-child(2) { background:#f0d68b; }.auth-preview-window-dots i:nth-child(3) { background:#a6d3a0; }
+    .auth-preview-greeting { display:flex;align-items:center;justify-content:space-between;margin:14px 0 12px; }.auth-preview-greeting small,.auth-preview-greeting b { display:block; }.auth-preview-greeting small { color:#8d9a88;font-size:9px; }.auth-preview-greeting b { margin-top:4px;color:#304a35;font-size:14px; }.auth-preview-avatar { width:35px;height:35px;display:grid;place-items:center;border-radius:12px;background:#e7f3df;color:#5c995a;font-size:16px; }
+    .auth-preview-stats { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px; }.auth-preview-stat { min-width:0;padding:11px 10px;border-radius:13px;background:#f7f9f4;border:1px solid #edf1e8; }.auth-preview-stat>span { display:block;color:#81907e;font-size:9px;white-space:nowrap; }.auth-preview-stat>span i { margin-right:3px;color:#65a568; }.auth-preview-stat>b { display:block;margin-top:8px;color:#334c37;font-size:clamp(12px,1.35vw,17px);letter-spacing:-.3px;white-space:nowrap; }.auth-preview-stat>small { display:block;margin-top:3px;color:#a1ac9d;font-size:8px; }.auth-preview-saved { background:#edf6e8;border-color:#dfecd7; }
+    .auth-preview-bottom { display:grid;grid-template-columns:1.15fr .85fr;gap:10px;margin-top:10px; }.auth-preview-chart,.auth-preview-goal { min-width:0;padding:13px 12px;border-radius:14px;background:#fff;border:1px solid #edf1e8; }.auth-preview-section-title { display:flex;align-items:center;justify-content:space-between;gap:5px;color:#405843;font-size:10px; }.auth-preview-section-title small { color:#9ba797;font-size:8px;white-space:nowrap; }.auth-preview-section-title>i { color:#82ae72; }
+    .auth-bars { height:72px;display:flex;align-items:flex-end;justify-content:space-around;gap:7px;padding:7px 3px 0;border-bottom:1px solid #edf1e8;background:repeating-linear-gradient(to bottom,transparent 0,transparent 22px,#f1f4ed 23px,#f1f4ed 24px); }.auth-bars span { height:var(--bar-a);width:clamp(8px,1.15vw,15px);max-width:16px;position:relative;border-radius:4px 4px 1px 1px;background:#81b879; }.auth-bars span:after { content:"";position:absolute;left:calc(100% + 2px);bottom:0;width:clamp(4px,.6vw,7px);height:var(--bar-b);border-radius:3px 3px 1px 1px;background:#f0c56f; }
+    .auth-chart-days { display:flex;justify-content:space-around;padding-top:5px;color:#a1ac9d;font-size:8px; }.auth-goal-illustration { position:relative;display:grid;place-items:center;height:65px;margin-top:5px;border-radius:10px;background:linear-gradient(135deg,#f5f8ed,#fff6e3);color:#e1a648;font-size:36px; }.auth-goal-illustration span { position:absolute;top:8px;right:21%;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:#ffdf86;color:#946b24;font-size:10px;font-weight:800; }.auth-goal-name { display:block;margin-top:8px;color:#596b55;font-size:9px; }.auth-goal-track { height:5px;margin-top:8px;border-radius:99px;background:#edf1e8;overflow:hidden; }.auth-goal-track span { display:block;width:75%;height:100%;border-radius:99px;background:linear-gradient(90deg,#76b66d,#a5d18c); }.auth-goal-meta { display:flex;justify-content:space-between;margin-top:5px;color:#98a493;font-size:8px; }.auth-goal-meta b { color:#6b9b60; }
+    .auth-preview-foot { display:flex;align-items:center;gap:6px;margin-top:12px;color:#94a38d;font-size:9px; }.auth-preview-foot i { color:#76a86b; }
+    @media (max-width:760px) {
+      .auth-layout { grid-template-columns:1fr;min-height:0; }
+      .auth-form-side { order:2; }
+      .auth-welcome { order:1; }
+      .auth-desktop-preview { display:none; }
+      .auth-hero-art { display:flex; }
+      .auth-welcome-copy { margin-top:8px; }
+    }
+    @media (min-width:761px) and (max-height:850px) {
+      .auth-screen { padding:18px 30px; }
+      .auth-layout { min-height:0; }
+      .auth-welcome,.auth-form-side { padding-top:26px;padding-bottom:26px; }
+      .auth-desktop-preview { margin-top:18px;padding:13px 15px 10px; }
+      .auth-preview-bottom { margin-top:8px; }
+      .auth-bars { height:58px; }
+      .auth-preview-greeting { margin:10px 0; }
+      .auth-preview-stat { padding:8px; }
+      .auth-goal-illustration { height:52px; }
+      .auth-preview-foot { margin-top:8px; }
+    }
   </style>
 </head>
 <body class="pb-24">
@@ -143,6 +181,20 @@
           <p class="auth-eyebrow">YOUR MONEY, YOUR GOALS</p>
           <h1>เริ่มเก็บเงิน<br />เพื่อสิ่งที่ <span>ตั้งใจ</span></h1>
           <p>จดรายรับรายจ่าย วางแผนเป้าหมาย แล้วค่อย ๆ เติบโตไปทีละวัน</p>
+        </div>
+        <div class="auth-desktop-preview" aria-label="ตัวอย่างหน้าสรุปการเงิน">
+          <div class="auth-preview-top"><span class="auth-preview-window-dots"><i></i><i></i><i></i></span><span>ภาพรวมการเงิน</span><i class="fa-solid fa-ellipsis"></i></div>
+          <div class="auth-preview-greeting"><div><small>สวัสดี วันนี้มาออมกัน ✨</small><b>สรุปการเงินของคุณ</b></div><span class="auth-preview-avatar"><i class="fa-solid fa-piggy-bank"></i></span></div>
+          <div class="auth-preview-stats">
+            <div class="auth-preview-stat"><span><i class="fa-solid fa-arrow-down"></i> รายรับ</span><b>฿12,500</b><small>เดือนนี้</small></div>
+            <div class="auth-preview-stat"><span><i class="fa-solid fa-arrow-up"></i> รายจ่าย</span><b>฿7,250</b><small>เดือนนี้</small></div>
+            <div class="auth-preview-stat auth-preview-saved"><span><i class="fa-solid fa-wallet"></i> คงเหลือ</span><b>฿5,250</b><small>ยอดสะสม</small></div>
+          </div>
+          <div class="auth-preview-bottom">
+            <div class="auth-preview-chart"><div class="auth-preview-section-title"><b>เงินเข้า - ออก</b><small>7 วันล่าสุด</small></div><div class="auth-bars" aria-hidden="true"><span style="--bar-a:42%;--bar-b:24%"></span><span style="--bar-a:62%;--bar-b:32%"></span><span style="--bar-a:48%;--bar-b:20%"></span><span style="--bar-a:78%;--bar-b:42%"></span><span style="--bar-a:55%;--bar-b:29%"></span><span style="--bar-a:88%;--bar-b:38%"></span><span style="--bar-a:68%;--bar-b:25%"></span></div><div class="auth-chart-days"><span>จ.</span><span>อ.</span><span>พ.</span><span>พฤ.</span><span>ศ.</span><span>ส.</span><span>อา.</span></div></div>
+            <div class="auth-preview-goal"><div class="auth-preview-section-title"><b>เป้าหมายออมเงิน</b><i class="fa-solid fa-bullseye"></i></div><div class="auth-goal-illustration"><i class="fa-solid fa-piggy-bank"></i><span>฿</span></div><b class="auth-goal-name">เก็บเงินก้อนแรก</b><div class="auth-goal-track"><span></span></div><div class="auth-goal-meta"><span>฿7,500</span><b>75%</b></div></div>
+          </div>
+          <div class="auth-preview-foot"><i class="fa-solid fa-shield-heart"></i> ข้อมูลส่วนตัวของคุณ • จัดการได้ในที่เดียว</div>
         </div>
         <div class="auth-benefits"><span><i class="fa-solid fa-circle-check"></i> จัดการเงินง่าย ๆ</span><span><i class="fa-solid fa-shield-heart"></i> ข้อมูลส่วนตัวของคุณ</span></div>
       </aside>
