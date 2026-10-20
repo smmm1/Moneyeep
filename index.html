@@ -484,8 +484,13 @@
           cache: 'no-store'
         });
         const result = await response.json();
-        if (!response.ok || !Number.isFinite(Number(result.used_mb))) throw new Error(result.error || 'Request failed');
-        label.innerHTML = '<i class="fa-solid fa-database mr-2"></i>Database: ' + Math.max(0, Math.round(Number(result.used_mb))) + ' / ' + Math.max(1, Math.round(Number(result.quota_mb) || 500)) + ' MB';
+        if (!response.ok || !Number.isFinite(Number(result.database_bytes)) || !Number.isFinite(Number(result.transactions_bytes)) || !Number.isFinite(Number(result.transactions_rows))) throw new Error(result.error || 'Request failed');
+        const databaseKB = Math.max(0, Number(result.database_bytes) / 1024);
+        const databaseMB = Number(result.database_bytes) / (1024 * 1024);
+        const transactionsKB = Math.max(0, Number(result.transactions_bytes) / 1024);
+        const quotaMB = Math.max(1, Math.round(Number(result.quota_mb) || 500));
+        const numberFormat = value => value.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        label.innerHTML = '<i class="fa-solid fa-database mr-2"></i><span>Database: ' + numberFormat(databaseKB) + ' KB (' + numberFormat(databaseMB) + ' MB) / ' + quotaMB + ' MB</span><br><span class="block mt-1 pl-6 text-xs font-medium text-emerald-600">ตารางธุรกรรม: ' + numberFormat(transactionsKB) + ' KB · ' + Math.max(0, Math.floor(Number(result.transactions_rows))).toLocaleString('th-TH') + ' รายการ</span>';
       } catch (error) {
         label.innerHTML = '<i class="fa-solid fa-database mr-2"></i>Database: โหลดไม่สำเร็จ';
         console.warn('Database usage refresh failed');
