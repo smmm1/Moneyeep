@@ -381,9 +381,9 @@
           <div id="savingsMissionsList" class="space-y-2.5"></div>
         </section>
 
-        <!-- Database Usage -->
-        <section class="cream-card rounded-3xl p-4" aria-label="สถานะฐานข้อมูล">
-          <p id="databaseUsageText" class="text-sm font-bold text-emerald-700"><i class="fa-solid fa-database mr-2"></i>Database: กำลังโหลด...</p>
+        <!-- Current Date and Time -->
+        <section class="cream-card rounded-2xl px-4 py-2.5" aria-label="วันที่และเวลาปัจจุบัน">
+          <p id="currentDateTimeText" class="text-xs sm:text-sm font-semibold text-gray-600"><i class="fa-regular fa-clock mr-2 text-emerald-600"></i>กำลังโหลดวันที่และเวลา...</p>
         </section>
 
         <!-- Recent Transactions -->
@@ -466,35 +466,14 @@
     const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_jwf8Gn_q1MxrusGYXOZgyQ_Vkbbf4eu';
     const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
     let transactions = [], recurringItems = [], currentUser = null, authMode = 'signin';
-    let databaseUsageTimer = null;
-    async function refreshDatabaseUsage() {
-      const label = document.getElementById('databaseUsageText');
-      if (!label || !currentUser) return;
-      try {
-        const { data: { session } } = await db.auth.getSession();
-        if (!session?.access_token) return;
-        const response = await fetch(SUPABASE_URL + '/functions/v1/database-stats', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': SUPABASE_PUBLISHABLE_KEY,
-            'Authorization': 'Bearer ' + session.access_token
-          },
-          body: '{}',
-          cache: 'no-store'
-        });
-        const result = await response.json();
-        if (!response.ok || !Number.isFinite(Number(result.database_bytes)) || !Number.isFinite(Number(result.transactions_bytes)) || !Number.isFinite(Number(result.transactions_rows))) throw new Error(result.error || 'Request failed');
-        const databaseKB = Math.max(0, Number(result.database_bytes) / 1024);
-        const databaseMB = Number(result.database_bytes) / (1024 * 1024);
-        const transactionsKB = Math.max(0, Number(result.transactions_bytes) / 1024);
-        const quotaMB = Math.max(1, Math.round(Number(result.quota_mb) || 500));
-        const numberFormat = value => value.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        label.innerHTML = '<i class="fa-solid fa-database mr-2"></i><span>Database: ' + numberFormat(databaseKB) + ' KB (' + numberFormat(databaseMB) + ' MB) / ' + quotaMB + ' MB</span><br><span class="block mt-1 pl-6 text-xs font-medium text-emerald-600">ตารางธุรกรรม: ' + numberFormat(transactionsKB) + ' KB · ' + Math.max(0, Math.floor(Number(result.transactions_rows))).toLocaleString('th-TH') + ' รายการ</span>';
-      } catch (error) {
-        label.innerHTML = '<i class="fa-solid fa-database mr-2"></i>Database: โหลดไม่สำเร็จ';
-        console.warn('Database usage refresh failed');
-      }
+    let dateTimeTimer = null;
+    function refreshCurrentDateTime() {
+      const label = document.getElementById('currentDateTimeText');
+      if (!label) return;
+      const now = new Date();
+      const date = now.toLocaleDateString('th-TH', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+      const time = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+      label.innerHTML = '<i class="fa-regular fa-clock mr-2 text-emerald-600"></i>' + date + ' · ' + time + ' น.';
     }
     let savingsGoal = {name:'เงินเก็บของฉัน',target:0};
     let currentDate = new Date(), selectedMonth = currentDate.getMonth(), selectedYear = currentDate.getFullYear();
@@ -521,7 +500,7 @@
       } catch(err) { showAuthMessage(err.message || 'ดำเนินการไม่สำเร็จ กรุณาลองใหม่',true); }
       finally { btn.disabled=false; setAuthMode(authMode); }
     });
-    async function enterApp(user) { currentUser=user; document.getElementById('authScreen').classList.add('hidden'); document.getElementById('appShell').classList.remove('hidden'); document.getElementById('signedInLabel').textContent='บัญชี: '+(user.email||'ผู้ใช้'); setDefaultDateTime(); try { await loadSavingsGoal(); } catch(err) { alert('โหลดเป้าหมายออมเงินไม่สำเร็จ: '+(err.message||'กรุณาลองใหม่')); } await loadData(); refreshDatabaseUsage(); if(!databaseUsageTimer) databaseUsageTimer=setInterval(()=>{if(currentUser) refreshDatabaseUsage();},60000); }
+    async function enterApp(user) { currentUser=user; document.getElementById('authScreen').classList.add('hidden'); document.getElementById('appShell').classList.remove('hidden'); document.getElementById('signedInLabel').textContent='บัญชี: '+(user.email||'ผู้ใช้'); setDefaultDateTime(); try { await loadSavingsGoal(); } catch(err) { alert('โหลดเป้าหมายออมเงินไม่สำเร็จ: '+(err.message||'กรุณาลองใหม่')); } await loadData(); refreshCurrentDateTime(); if(!dateTimeTimer) dateTimeTimer=setInterval(refreshCurrentDateTime,1000); }
     async function signOut() { const {error}=await db.auth.signOut(); if(error){alert('ออกจากระบบไม่สำเร็จ: '+error.message);return;} transactions=[];recurringItems=[];currentUser=null;document.getElementById('appShell').classList.add('hidden');document.getElementById('authScreen').classList.remove('hidden');document.getElementById('authEmail').value='';document.getElementById('authPassword').value='';setAuthMode('signin'); }
     db.auth.onAuthStateChange((event,session)=>{ if(session?.user && !currentUser) { setTimeout(()=>enterApp(session.user),0); } else if(!session?.user && currentUser) { currentUser=null; transactions=[]; recurringItems=[]; document.getElementById('appShell').classList.add('hidden'); document.getElementById('authScreen').classList.remove('hidden'); } });
     document.addEventListener('DOMContentLoaded',async()=>{ const {data:{session}}=await db.auth.getSession(); if(session?.user) await enterApp(session.user); });
