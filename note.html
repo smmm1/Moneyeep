@@ -71,6 +71,33 @@
     @keyframes note-pop{0%{opacity:0;transform:translateY(22px) scale(.86) rotate(-4deg)}70%{opacity:1;transform:translateY(-3px) scale(1.025) rotate(1deg)}100%{opacity:1;transform:translateY(0) scale(1) rotate(var(--tilt,0deg))}}
     @media(max-width:760px){:root{--sidebar:0px}.app-layout{display:block}.sidebar{position:sticky;top:0;height:auto;padding:7px 10px;border-right:0;border-bottom:1px solid #f1ead6;display:flex;flex-direction:row;align-items:center;gap:5px;overflow-x:auto;white-space:nowrap;background:#fffefa}.brand{display:none}.nav-link{padding:10px 12px;flex-shrink:0;font-size:12px}.nav-link i{width:auto}.side-label,.side-copy{display:none}.topbar{padding:16px 18px}.content{padding:18px 13px}.composer{border-radius:16px}.composer textarea{padding:14px 12px;font-size:13px;min-height:58px}.save-btn{padding:0 14px;font-size:12px;gap:6px}.save-btn span{display:none}.board{min-height:540px}.sticky-note{width:min(250px,calc(100vw - 38px));min-height:180px}.board-tip{display:none}}
     @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+  
+/* Shared Moneyeep UI system — notes page accent */
+:root{--ui-accent:#c9a936;--ui-accent-soft:#fff8dc;--ui-accent-line:#f0e0a0;--ui-ink:#27352f;--ui-muted:#7b8a82;--ui-surface:rgba(255,255,255,.94);--ui-border:#e7ece6;--ui-radius:22px;--sidebar:236px}
+body{background-color:#f7f8f4;background-image:radial-gradient(#dce8dd .7px,transparent .7px);background-size:18px 18px;color:var(--ui-ink)}
+.app-layout{grid-template-columns:236px minmax(0,1fr);gap:0}
+.sidebar{padding:24px 16px;background:rgba(255,255,255,.92);border-right:1px solid var(--ui-border);backdrop-filter:blur(16px);gap:7px}
+.brand{padding:8px 9px 26px;color:var(--ui-ink)}
+.brand-icon{border-radius:14px;background:var(--ui-accent-soft);color:#9b7d12}
+.nav-link{border-radius:14px;color:#617168;transition:background .18s,color .18s}
+.nav-link:hover,.nav-link.active{background:var(--ui-accent-soft);color:#8e7110}
+.side-label{color:#9b8d5c}
+.side-copy{color:var(--ui-muted)}
+.main{min-width:0;overflow:hidden}
+.topbar{padding:16px clamp(18px,3vw,36px);border-color:var(--ui-border);background:rgba(255,255,255,.92);box-shadow:0 4px 18px rgba(39,53,47,.035)}
+.topbar>div:first-child{gap:12px!important}
+.eyebrow{color:#9b7d12;letter-spacing:1.6px}
+.subhead{color:var(--ui-muted)}
+.signout{border-color:var(--ui-border);background:#fff;color:#617168;border-radius:12px;padding:10px 13px}
+.content{max-width:1400px;padding:24px clamp(18px,3vw,36px)}
+.composer{border-color:var(--ui-border);border-radius:22px;box-shadow:0 8px 26px rgba(38,55,43,.055)}
+.composer:focus-within{border-color:var(--ui-accent-line);box-shadow:0 0 0 4px #f7edc6aa,0 8px 26px rgba(38,55,43,.055)}
+.composer textarea{font-family:inherit}
+.save-btn{background:var(--ui-accent-soft);color:#79600d}
+.save-btn:hover{background:#f6e8ac}
+.board{border-color:var(--ui-border);border-radius:22px;background-color:rgba(255,255,255,.55);background-image:radial-gradient(#dce8dd .7px,transparent .7px)}
+@media(max-width:760px){.app-layout{display:block}.sidebar{position:relative;height:auto;padding:10px 14px;border-right:0;border-bottom:1px solid var(--ui-border);display:flex;align-items:center;gap:8px;overflow-x:auto}.brand{display:none}.nav-link{white-space:nowrap;margin:0;padding:10px 12px}.topbar{padding:16px}.content{padding:16px}.composer{flex-direction:column}.save-btn{padding:14px 18px}}
+
   </style>
 </head>
 <body>
