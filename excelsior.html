@@ -183,6 +183,18 @@ input,select,button{font:inherit}
   <div id="exerciseApp" class="hidden">
     <div id="exerciseLoading" class="cream-card rounded-3xl p-5 text-center text-sm text-gray-500">กำลังโหลดข้อมูลของคุณ…</div>
     <div id="exerciseContent" class="exercise-grid hidden mt-4">
+<div class="cream-card rounded-3xl exercise-card exercise-wide">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+              <div><h2 class="font-extrabold text-lg text-gray-800"><i class="fa-solid fa-users text-emerald-600 mr-2"></i>โปรไฟล์สุขภาพ</h2><p class="text-xs text-gray-500 mt-1">แยกข้อมูลตามบุคคลหรือเป้าหมาย ไม่ปะปนกัน</p></div>
+              <button type="button" onclick="createExerciseProfile()" class="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2.5"><i class="fa-solid fa-plus mr-1"></i>สร้างโปรไฟล์</button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto] gap-3 items-end">
+              <div><label for="exerciseProfileSelect" class="block text-xs text-gray-600 mb-1.5">เลือกโปรไฟล์ที่ต้องการใช้งาน</label><select id="exerciseProfileSelect" onchange="selectExerciseProfile(this.value)" class="w-full cream-input rounded-xl px-3 py-3 text-sm"></select></div>
+              <button type="button" onclick="renameExerciseProfile()" class="rounded-xl border border-emerald-200 bg-white text-emerald-700 font-bold text-xs px-4 py-3"><i class="fa-solid fa-pen mr-1"></i>เปลี่ยนชื่อ</button>
+            </div>
+            <p id="exerciseProfileHint" class="text-xs text-gray-500 mt-3">ข้อมูลสุขภาพและรายการกิจกรรมจะอ้างอิงโปรไฟล์ที่เลือก</p>
+          </div>
+          
 <section id="view-workout" class="contents">
           <div class="cream-card rounded-3xl exercise-card">
             <div class="flex items-center gap-3 mb-3"><div class="w-11 h-11 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-xl"><i class="fa-solid fa-heart-pulse"></i></div><div><h2 class="font-extrabold text-base text-gray-800">สุขภาพ & การออกกำลังกาย</h2><p class="text-[11px] text-gray-500">บันทึกกิจกรรมและติดตามความก้าวหน้า</p></div></div>
@@ -190,7 +202,7 @@ input,select,button{font:inherit}
               <div><label class="block text-gray-600 mb-1">อายุ (ปี)</label><input id="exerciseAge" type="number" min="1" max="120" class="w-full cream-input rounded-xl px-3 py-2" placeholder="อายุ"></div>
               <div><label class="block text-gray-600 mb-1">ส่วนสูง (ซม.)</label><input id="exerciseHeight" type="number" min="30" max="260" step="0.1" class="w-full cream-input rounded-xl px-3 py-2" placeholder="ซม."></div>
               <div><label class="block text-gray-600 mb-1">น้ำหนัก (กก.)</label><input id="exerciseWeight" type="number" min="1" max="500" step="0.1" class="w-full cream-input rounded-xl px-3 py-2" placeholder="กก."></div>
-              <button type="submit" class="col-span-3 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold">บันทึกข้อมูลสุขภาพ</button>
+              <button type="submit" class="sm:col-span-3 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold">บันทึกข้อมูลของโปรไฟล์นี้</button>
             </form>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3"><div class="rounded-2xl bg-cream-100 p-3"><p class="text-[11px] text-gray-500">ดัชนีมวลกาย (BMI)</p><p id="exerciseBMI" class="text-xl font-extrabold text-emerald-700">—</p><p id="exerciseBMIText" class="text-[10px] text-gray-500">กรอกส่วนสูงและน้ำหนัก</p></div><div class="rounded-2xl bg-cream-100 p-3"><p class="text-[11px] text-gray-500">น้ำหนักล่าสุด</p><p id="exerciseWeightDisplay" class="text-xl font-extrabold text-gray-800">—</p><p class="text-[10px] text-gray-500">กิโลกรัม</p></div></div>
             <p class="text-[10px] text-gray-400 mt-2">BMI เป็นตัวคัดกรองเบื้องต้น ไม่ใช่การวินิจฉัยสุขภาพ และเกณฑ์ผู้มีอายุต่ำกว่า 20 ปีแตกต่างจากผู้ใหญ่</p>
@@ -224,28 +236,67 @@ const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_jwf8Gn_q1MxrusGYXOZgyQ_Vkbbf4eu
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 let currentUser = null;
     // Exercise tracker: data is isolated per signed-in user by Supabase RLS.
-    let exerciseProfile={age:null,height_cm:null,weight_kg:null},exerciseLogs=[],exerciseMonth=new Date();
+    let exerciseProfile={id:null,profile_name:"",age:null,height_cm:null,weight_kg:null},exerciseProfiles=[],exerciseLogs=[],exerciseMonth=new Date();
     const exerciseNames={running:'วิ่ง',weightlifting:'ยกน้ำหนัก',pushups:'วิดพื้น',squats:'สควอต'};
     const exerciseIcons={running:'fa-person-running',weightlifting:'fa-dumbbell',pushups:'fa-hand-fist',squats:'fa-person-walking'};
     function localISODate(d=new Date()){return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10);}
     function exerciseMoneyNum(n){return Math.round(Number(n)||0).toLocaleString('th-TH');}
     async function loadExerciseData(){
       if(!currentUser)return;
-      const [p,l]=await Promise.all([db.from('exercise_profiles').select('age,height_cm,weight_kg').eq('user_id',currentUser.id).maybeSingle(),db.from('exercise_logs').select('id,exercise_date,activity_type,distance_km,duration_minutes,weight_lifted_kg,sets,reps,calories_estimated,notes,created_at').eq('user_id',currentUser.id).order('exercise_date',{ascending:false}).limit(1000)]);
-      if(p.error){alert('โหลดข้อมูลสุขภาพไม่สำเร็จ: '+p.error.message);return;}if(l.error){alert('โหลดประวัติออกกำลังกายไม่สำเร็จ: '+l.error.message);return;}
-      exerciseProfile=p.data||{age:null,height_cm:null,weight_kg:null};exerciseLogs=(l.data||[]).map(x=>({...x,calories_estimated:Number(x.calories_estimated)||0,distance_km:x.distance_km==null?null:Number(x.distance_km)}));
-      document.getElementById('exerciseAge').value=exerciseProfile.age??'';document.getElementById('exerciseHeight').value=exerciseProfile.height_cm??'';document.getElementById('exerciseWeight').value=exerciseProfile.weight_kg??'';
+      const {data:profiles,error}=await db.from('exercise_profiles').select('id,user_id,profile_name,age,height_cm,weight_kg,updated_at').eq('user_id',currentUser.id).order('created_at',{ascending:true});
+      if(error){alert('โหลดโปรไฟล์ไม่สำเร็จ: '+error.message);return;}
+      exerciseProfiles=profiles||[];
+      if(!exerciseProfiles.length){
+        const {data,error:createError}=await db.from('exercise_profiles').insert({user_id:currentUser.id,profile_name:'โปรไฟล์หลัก'}).select('id,user_id,profile_name,age,height_cm,weight_kg,updated_at').single();
+        if(createError){alert('สร้างโปรไฟล์เริ่มต้นไม่สำเร็จ: '+createError.message);return;}exerciseProfiles=[data];
+      }
+      if(!exerciseProfiles.some(p=>p.id===exerciseProfile.id))exerciseProfile=exerciseProfiles[0];
+      renderExerciseProfileSelector();
+      await loadActiveExerciseProfile();
       const today=localISODate();document.getElementById('exerciseDate').value ||= today;document.getElementById('exerciseSelectedDate').value ||= today;document.getElementById('exerciseCompareA').value ||= today;document.getElementById('exerciseCompareB').value ||= today;
-      updateExerciseFields();renderExerciseBMI();renderExerciseCalendar();renderExerciseDetails();renderExerciseStats();renderExerciseComparison();
+      updateExerciseFields();
+    }
+    function renderExerciseProfileSelector(){
+      const select=document.getElementById('exerciseProfileSelect');select.innerHTML='';
+      exerciseProfiles.forEach(p=>{const opt=document.createElement('option');opt.value=p.id;opt.textContent=p.profile_name;select.appendChild(opt);});
+      select.value=exerciseProfile.id||exerciseProfiles[0]?.id||'';
+      document.getElementById('exerciseProfileHint').textContent=exerciseProfile.profile_name?'กำลังใช้งานโปรไฟล์ “'+exerciseProfile.profile_name+'” — ประวัติและสถิติด้านล่างแสดงเฉพาะโปรไฟล์นี้':'เลือกโปรไฟล์เพื่อเริ่มต้น';
+    }
+    async function loadActiveExerciseProfile(){
+      if(!exerciseProfile.id)return;
+      const {data:p,error:profileError}=await db.from('exercise_profiles').select('id,user_id,profile_name,age,height_cm,weight_kg,updated_at').eq('id',exerciseProfile.id).eq('user_id',currentUser.id).single();
+      if(profileError){alert('โหลดข้อมูลโปรไฟล์ไม่สำเร็จ: '+profileError.message);return;}
+      exerciseProfile=p;
+      const {data:l,error:logsError}=await db.from('exercise_logs').select('id,profile_id,exercise_date,activity_type,distance_km,duration_minutes,weight_lifted_kg,sets,reps,calories_estimated,notes,created_at').eq('user_id',currentUser.id).eq('profile_id',exerciseProfile.id).order('exercise_date',{ascending:false}).limit(1000);
+      if(logsError){alert('โหลดประวัติออกกำลังกายไม่สำเร็จ: '+logsError.message);return;}
+      exerciseLogs=(l||[]).map(x=>({...x,calories_estimated:Number(x.calories_estimated)||0,distance_km:x.distance_km==null?null:Number(x.distance_km)}));
+      document.getElementById('exerciseAge').value=exerciseProfile.age??'';document.getElementById('exerciseHeight').value=exerciseProfile.height_cm??'';document.getElementById('exerciseWeight').value=exerciseProfile.weight_kg??'';
+      renderExerciseProfileSelector();renderExerciseBMI();renderExerciseCalendar();renderExerciseDetails();renderExerciseStats();renderExerciseComparison();
+    }
+    async function selectExerciseProfile(id){
+      const profile=exerciseProfiles.find(p=>p.id===id);if(!profile)return;exerciseProfile=profile;renderExerciseProfileSelector();await loadActiveExerciseProfile();
+    }
+    async function createExerciseProfile(){
+      if(!currentUser)return;
+      const name=prompt('ตั้งชื่อโปรไฟล์ เช่น ฉัน, ลูก, คู่ซ้อม');if(name===null)return;
+      const clean=name.trim();if(!clean){alert('กรุณาตั้งชื่อโปรไฟล์');return;}if(clean.length>60){alert('ชื่อโปรไฟล์ต้องไม่เกิน 60 ตัวอักษร');return;}
+      const {data,error}=await db.from('exercise_profiles').insert({user_id:currentUser.id,profile_name:clean}).select('id,user_id,profile_name,age,height_cm,weight_kg,updated_at').single();
+      if(error){alert('สร้างโปรไฟล์ไม่สำเร็จ: '+error.message);return;}exerciseProfiles.push(data);exerciseProfile=data;renderExerciseProfileSelector();await loadActiveExerciseProfile();
+    }
+    async function renameExerciseProfile(){
+      if(!exerciseProfile.id)return;const name=prompt('ตั้งชื่อใหม่ให้โปรไฟล์นี้',exerciseProfile.profile_name||'');if(name===null)return;
+      const clean=name.trim();if(!clean){alert('ชื่อโปรไฟล์ห้ามว่าง');return;}if(clean.length>60){alert('ชื่อโปรไฟล์ต้องไม่เกิน 60 ตัวอักษร');return;}
+      const {data,error}=await db.from('exercise_profiles').update({profile_name:clean,updated_at:new Date().toISOString()}).eq('id',exerciseProfile.id).eq('user_id',currentUser.id).select('id,user_id,profile_name,age,height_cm,weight_kg,updated_at').single();
+      if(error){alert('เปลี่ยนชื่อไม่สำเร็จ: '+error.message);return;}exerciseProfile=data;exerciseProfiles=exerciseProfiles.map(p=>p.id===data.id?data:p);renderExerciseProfileSelector();
     }
     function renderExerciseBMI(){const h=Number(exerciseProfile.height_cm),w=Number(exerciseProfile.weight_kg),bmi=h>0&&w>0?w/Math.pow(h/100,2):0;document.getElementById('exerciseWeightDisplay').textContent=w>0?w.toLocaleString('th-TH'):'—';document.getElementById('exerciseBMI').textContent=bmi?bmi.toFixed(1):'—';document.getElementById('exerciseBMIText').textContent=!bmi?'กรอกส่วนสูงและน้ำหนัก':bmi<18.5?'น้ำหนักน้อย':bmi<25?'ช่วงปกติ':bmi<30?'น้ำหนักเกิน':'อ้วนตามเกณฑ์ BMI ผู้ใหญ่';}
-    async function saveExerciseProfile(event){event.preventDefault();if(!currentUser){alert('กรุณาเข้าสู่ระบบก่อน');return;}const age=document.getElementById('exerciseAge').value,height=document.getElementById('exerciseHeight').value,weight=document.getElementById('exerciseWeight').value;const payload={user_id:currentUser.id,age:age?Number(age):null,height_cm:height?Number(height):null,weight_kg:weight?Number(weight):null,updated_at:new Date().toISOString()};const {error}=await db.from('exercise_profiles').upsert(payload,{onConflict:'user_id'});if(error){alert('บันทึกข้อมูลสุขภาพไม่สำเร็จ: '+error.message);return;}exerciseProfile={age:payload.age,height_cm:payload.height_cm,weight_kg:payload.weight_kg};renderExerciseBMI();renderExerciseStats();alert('บันทึกข้อมูลสุขภาพแล้ว');}
+    async function saveExerciseProfile(event){event.preventDefault();if(!currentUser||!exerciseProfile.id){alert('กรุณาเลือกโปรไฟล์ก่อน');return;}const age=document.getElementById('exerciseAge').value,height=document.getElementById('exerciseHeight').value,weight=document.getElementById('exerciseWeight').value;const payload={profile_name:exerciseProfile.profile_name,age:age?Number(age):null,height_cm:height?Number(height):null,weight_kg:weight?Number(weight):null,updated_at:new Date().toISOString()};const {data,error}=await db.from('exercise_profiles').update(payload).eq('id',exerciseProfile.id).eq('user_id',currentUser.id).select('id,user_id,profile_name,age,height_cm,weight_kg,updated_at').single();if(error){alert('บันทึกข้อมูลสุขภาพไม่สำเร็จ: '+error.message);return;}exerciseProfile=data;exerciseProfiles=exerciseProfiles.map(p=>p.id===data.id?data:p);renderExerciseProfileSelector();renderExerciseBMI();renderExerciseStats();alert('บันทึกข้อมูลโปรไฟล์ “'+exerciseProfile.profile_name+'” แล้ว');}
     function updateExerciseFields(){const type=document.getElementById('exerciseType').value;document.getElementById('exerciseDistanceWrap').classList.toggle('hidden',type!=='running');document.getElementById('exerciseLiftWrap').classList.toggle('hidden',type!=='weightlifting');document.getElementById('exerciseDurationWrap').classList.toggle('hidden',type==='running');document.getElementById('exerciseDuration').required=type!=='running';document.getElementById('exerciseDistance').required=type==='running';}
     async function saveExerciseLog(event){
       event.preventDefault();if(!currentUser){alert('กรุณาเข้าสู่ระบบก่อน');return;}const type=document.getElementById('exerciseType').value,date=document.getElementById('exerciseDate').value,rawDistance=Number(document.getElementById('exerciseDistance').value)||0;
       const distance=type==='running'?(document.getElementById('exerciseDistanceUnit').value==='m'?rawDistance/1000:rawDistance):null,duration=type==='running'?null:(Number(document.getElementById('exerciseDuration').value)||0),lift=type==='weightlifting'?(Number(document.getElementById('exerciseLiftWeight').value)||0):null,sets=document.getElementById('exerciseSets').value,reps=document.getElementById('exerciseReps').value,weight=Number(exerciseProfile.weight_kg)||0;
       let calories=0;if(type==='running')calories=weight*distance;else calories=((type==='weightlifting'?5:3.8)*3.5*weight/200)*duration;
-      const payload={user_id:currentUser.id,exercise_date:date,activity_type:type,distance_km:distance,duration_minutes:duration,weight_lifted_kg:lift,sets:sets===''?null:Number(sets),reps:reps===''?null:Number(reps),calories_estimated:Math.round(calories*10)/10,notes:document.getElementById('exerciseNotes').value.trim()};
+      const payload={user_id:currentUser.id,profile_id:exerciseProfile.id,exercise_date:date,activity_type:type,distance_km:distance,duration_minutes:duration,weight_lifted_kg:lift,sets:sets===''?null:Number(sets),reps:reps===''?null:Number(reps),calories_estimated:Math.round(calories*10)/10,notes:document.getElementById('exerciseNotes').value.trim()};
       const button=document.getElementById('exerciseSaveButton');button.disabled=true;button.textContent='กำลังบันทึก…';const {error}=await db.from('exercise_logs').insert(payload);button.disabled=false;button.innerHTML='<i class="fa-solid fa-floppy-disk mr-1"></i> บันทึกกิจกรรม';
       if(error){alert('บันทึกกิจกรรมไม่สำเร็จ: '+error.message);return;}document.getElementById('exerciseLogForm').reset();document.getElementById('exerciseDate').value=date;updateExerciseFields();await loadExerciseData();document.getElementById('exerciseSelectedDate').value=date;renderExerciseDetails();alert('บันทึกกิจกรรมแล้ว'+(calories>0?' • แคลอรีโดยประมาณ '+exerciseMoneyNum(calories)+' kcal':''));
     }
