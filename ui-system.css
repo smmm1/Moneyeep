@@ -163,7 +163,6 @@ body.ui-page-notes .main {
   overflow: hidden;
 }
 body.ui-page-savings .app-content > header,
-body.ui-page-health .exercise-main > header,
 body.ui-page-notes .topbar {
   position: sticky;
   top: 0;
@@ -183,8 +182,20 @@ body.ui-page-notes .topbar {
   box-shadow: 0 4px 18px rgba(38,53,46,.035);
   backdrop-filter: blur(16px);
 }
+body.ui-page-health .exercise-main > header {
+  position: relative;
+  display: block;
+  min-height: 0;
+  margin: 0 auto;
+  padding: 16px clamp(18px, 3vw, 36px) 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
 body.ui-page-savings .app-content > header h1,
-body.ui-page-health .exercise-main > header h1,
+body.ui-page-health .exercise-main > header > div:first-child h1,
 body.ui-page-notes .topbar h1 {
   color: var(--ui-ink);
   font-size: clamp(21px, 2.5vw, 28px);
@@ -193,13 +204,13 @@ body.ui-page-notes .topbar h1 {
   letter-spacing: -.55px;
 }
 body.ui-page-savings .app-content > header p,
-body.ui-page-health .exercise-main > header p,
+body.ui-page-health .exercise-main > header > div:first-child p,
 body.ui-page-notes .topbar .eyebrow,
 body.ui-page-notes .topbar .subhead {
   color: var(--ui-muted);
 }
 body.ui-page-savings .app-content > header .rounded-2xl,
-body.ui-page-health .exercise-main > header .rounded-2xl,
+body.ui-page-health .exercise-main > header > div:first-child .rounded-2xl,
 body.ui-page-notes .topbar .brand-icon {
   border-radius: 15px;
   background: var(--ui-accent-soft);
@@ -363,12 +374,14 @@ body.ui-page-health .exercise-main main {
     font-size: 12px;
   }
   body.ui-page-savings .app-content > header,
-  body.ui-page-health .exercise-main > header,
   body.ui-page-notes .topbar {
     position: relative;
     min-height: 70px;
     padding: 14px 16px;
     gap: 10px;
+  }
+  body.ui-page-health .exercise-main > header {
+    padding: 14px 16px 0;
   }
   body.ui-page-savings .app-content > header h1,
   body.ui-page-health .exercise-main > header h1,
