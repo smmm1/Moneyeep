@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#fff6bf">
   <title>โน๊ต — ออมตัง</title>
   <link rel="icon" type="image/svg+xml" href="/piggy-bank.svg">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="this.onerror=null;this.src=&quot;https://unpkg.com/@supabase/supabase-js@2&quot;"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -104,6 +104,14 @@
 <script>
   const SUPABASE_URL = 'https://daxukbbarrcrdkbwzlkg.supabase.co';
   const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_jwf8Gn_q1MxrusGYXOZgyQ_Vkbbf4eu';
+  if (!window.supabase || typeof window.supabase.createClient !== 'function') {
+    document.getElementById('composer').addEventListener('submit', e => {
+      e.preventDefault();
+      alert('เชื่อมต่อระบบบันทึกไม่สำเร็จ กรุณาเปิดอินเทอร์เน็ตแล้วรีเฟรชหน้าอีกครั้ง');
+    });
+    document.querySelector('.content').insertAdjacentHTML('afterbegin', '<p role="alert" style="margin:0 auto 16px;max-width:900px;padding:12px 16px;border-radius:12px;background:#fff0e8;color:#a33b25;font-size:13px">โหลดระบบฐานข้อมูลไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ตแล้วรีเฟรชหน้า</p>');
+    throw new Error('Supabase client library failed to load');
+  }
   const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
   const board = document.getElementById('board');
   const input = document.getElementById('noteInput');
@@ -169,7 +177,7 @@
   async function createNote(content){
     const pos=defaultPosition(notes.length),rotation=Math.round((Math.random()*4-2)*10)/10;
     const {data,error}=await db.from('finance_notes').insert({user_id:currentUser.id,content,is_pinned:false,position_x:pos.x,position_y:pos.y,rotation}).select().single();
-    if(error){showToast('บันทึกไม่สำเร็จ กรุณาลองใหม่');console.error(error);return;}
+    if(error){showToast('บันทึกไม่สำเร็จ: '+(error.message||'กรุณาลองใหม่'));console.error('Create note failed:',error);return;}
     notes.unshift({...data,_x:pos.x,_y:pos.y,_z:++highestZ,_pop:true});selectedId=data.id;renderNotes();
     const el=board.querySelector('[data-id="'+CSS.escape(data.id)+'"]');if(el)el.classList.add('note-pop');
     input.value='';input.style.height='auto';showToast('บันทึกแล้ว แปะโน๊ตให้เรียบร้อย ✨');
@@ -179,7 +187,7 @@
   function startEdit(id){const note=notes.find(n=>n.id===id);if(!note)return;notes.forEach(n=>n._editing=false);note._editing=true;selectedId=id;renderNotes();}
   async function saveEdit(id,content){const clean=String(content||'').trim();if(!clean){showToast('โน๊ตห้ามว่างเปล่า');return;}if(clean.length>10000){showToast('ข้อความยาวเกิน 10,000 ตัวอักษร');return;}const {error}=await db.from('finance_notes').update({content:clean,updated_at:new Date().toISOString()}).eq('id',id);if(error){showToast('แก้ไขไม่สำเร็จ กรุณาลองใหม่');return;}const note=notes.find(n=>n.id===id);if(note){note.content=clean;note.updated_at=new Date().toISOString();note._editing=false;}renderNotes();showToast('บันทึกการแก้ไขแล้ว');}
   async function deleteNote(id){if(!confirm('ลบโพสต์อิทนี้ใช่ไหม? ลบแล้วจะกู้คืนไม่ได้'))return;const {error}=await db.from('finance_notes').delete().eq('id',id);if(error){showToast('ลบไม่สำเร็จ กรุณาลองใหม่');return;}notes=notes.filter(n=>n.id!==id);if(selectedId===id)selectedId=null;renderNotes();showToast('ลบโน๊ตแล้ว');}
-  document.getElementById('composer').addEventListener('submit',async e=>{e.preventDefault();const content=input.value.trim();if(!content){input.focus();showToast('เขียนอะไรสักนิดก่อนบันทึกนะ');return;}saveBtn.disabled=true;try{await createNote(content);}finally{saveBtn.disabled=false;}});
+  document.getElementById('composer').addEventListener('submit',async e=>{e.preventDefault();const content=input.value.trim();if(!content){input.focus();showToast('เขียนอะไรสักนิดก่อนบันทึกนะ');return;}if(!currentUser){showToast('เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่');return;}saveBtn.disabled=true;saveBtn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i><span>กำลังบันทึก…</span>';try{await createNote(content);}catch(err){console.error('Save note exception:',err);showToast('บันทึกไม่สำเร็จ: '+(err?.message||'เกิดข้อผิดพลาด'));}finally{saveBtn.disabled=false;saveBtn.innerHTML='<i class="fa-solid fa-plus"></i><span>บันทึก</span>';}});
   input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,240)+'px';});
   document.getElementById('signoutBtn').addEventListener('click',async()=>{await db.auth.signOut();location.href='/';});
   board.addEventListener('click',e=>{if(e.target===board){selectedId=null;document.querySelectorAll('.sticky-note').forEach(el=>el.classList.remove('selected'));}});
@@ -195,3 +203,5 @@
 </body>
 </html>
 <!-- Trigger fresh Vercel build for the latest note page fix. -->
+
+<!-- Improve save feedback and provide CDN fallback. -->
