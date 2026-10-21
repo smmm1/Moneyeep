@@ -43,7 +43,7 @@
     .board-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px}
     .board-title{font-size:13px;font-weight:800;color:#837342}.board-title span{color:#b5a66e;font-weight:500;margin-left:6px}
     .board-tip{font-size:11px;color:#b3a77f}
-    .board{position:relative;min-height:520px;border:1px dashed #f0e5b8;border-radius:24px;background-color:#fffef8;background-image:radial-gradient(#e8ddb0 0.7px,transparent .7px);background-size:18px 18px;overflow:hidden;isolation:isolate}
+    .board{position:relative;min-height:520px;border:1px dashed #f0e5b8;border-radius:24px;background-color:#fffef8;background-image:radial-gradient(#e8ddb0 0.7px,transparent .7px);background-size:18px 18px;overflow:visible;isolation:isolate}
     .empty-state{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;color:#b7ab7f;pointer-events:none}
     .empty-state .empty-icon{width:62px;height:62px;margin:0 auto 12px;display:grid;place-items:center;border-radius:22px;background:#fff8d8;color:#d4b333;font-size:25px}
     .empty-state strong{display:block;font-size:14px;color:#9f915e;margin-bottom:5px}.empty-state p{font-size:12px;line-height:1.8;margin:0}
@@ -130,7 +130,7 @@
       const el=document.createElement('article');el.className='sticky-note'+(note.id===selectedId?' selected':'')+(note.is_pinned?' pinned':'');
       el.dataset.id=note.id;el.style.left=(note._x??defaultPosition(index).x)+'px';el.style.top=(note._y??defaultPosition(index).y)+'px';el.style.zIndex=note._z||10;el.style.setProperty('--tilt',note.rotation+'deg');el.style.background=colors[index%colors.length];
       const editing=note._editing===true;
-      el.innerHTML='<div class="note-toolbar" data-drag-handle="true"><span class="note-number">NOTE / '+String(index+1).padStart(2,'0')+'</span><div class="note-actions"><button class="icon-btn pin-btn" type="button" title="'+(note.is_pinned?'เลิกปักหมุด':'ปักหมุด')+'" aria-label="'+(note.is_pinned?'เลิกปักหมุด':'ปักหมุด')+'"><i class="fa-solid fa-thumbtack"></i></button><button class="icon-btn edit-btn" type="button" title="แก้ไข" aria-label="แก้ไขโน๊ต"><i class="fa-solid fa-pen"></i></button><button class="icon-btn danger delete-btn" type="button" title="ลบ" aria-label="ลบโน๊ต"><i class="fa-regular fa-trash-can"></i></button></div></div><div class="note-text '+(editing?'editing':'')+'" '+(editing?'contenteditable="true" role="textbox" aria-label="แก้ไขข้อความโน๊ต"':'')+'>'+escapeHTML(note.content)+'</div>'+(editing?'<div class="note-editbar"><button class="mini-btn cancel-edit" type="button">ยกเลิก</button><button class="mini-btn primary save-edit" type="button">บันทึกการแก้ไข</button></div>':'')+'<div class="note-footer"><span class="note-status">'+(note.is_pinned?'📌 ปักหมุดแล้ว':'')+'</span><span class="note-date"><i class="fa-regular fa-clock"></i>'+formatDate(note.created_at)+'</span></div>';
+      el.innerHTML='<div class="note-toolbar" data-drag-handle="true"><span class="note-number">NOTE / '+String(index+1).padStart(2,'0')+'</span><div class="note-actions"><button class="icon-btn pin-btn" type="button" title="'+(note.is_pinned?'เลิกปักหมุด':'ปักหมุด')+'" aria-label="'+(note.is_pinned?'เลิกปักหมุด':'ปักหมุด')+'"><i class="fa-solid fa-thumbtack"></i></button><button class="icon-btn edit-btn" type="button" title="แก้ไข" aria-label="แก้ไขโน๊ต"><i class="fa-solid fa-pen"></i></button><button class="icon-btn danger delete-btn" type="button" title="ลบ" aria-label="ลบโน๊ต"><i class="fa-regular fa-trash-can"></i></button></div></div><div class="note-text '+(editing?'editing':'')+'" '+(editing?'contenteditable="true" role="textbox" aria-label="แก้ไขข้อความโน๊ต"':'')+'>'+escapeHTML(note.content)+'</div>'+(editing?'<div class="note-editbar"><button class="mini-btn cancel-edit" type="button">ยกเลิก</button><button class="mini-btn primary save-edit" type="button">บันทึกการแก้ไข</button></div>':'')+'<div class="note-footer"><span class="note-status">'+(note.is_pinned?'📌 ปักหมุดแล้ว':'')+'</span><span class="note-date"><i class="fa-regular fa-clock"></i>'+formatDate(note.updated_at||note.created_at)+'</span></div>';
       el.addEventListener('pointerdown',()=>selectNote(note.id),{passive:true});
       el.querySelector('.pin-btn').addEventListener('click',()=>togglePin(note.id));
       el.querySelector('.edit-btn').addEventListener('click',()=>startEdit(note.id));
@@ -143,8 +143,10 @@
       const handle=el.querySelector('[data-drag-handle]');
       handle.addEventListener('pointerdown',e=>startDrag(e,note,el));
       board.appendChild(el);
+      const safePos=keepInside(note._x??defaultPosition(index).x,note._y??defaultPosition(index).y,el);note._x=safePos.x;note._y=safePos.y;el.style.left=safePos.x+'px';el.style.top=safePos.y+'px';
       if(editing){const textEl=el.querySelector('.note-text');textEl.focus();const range=document.createRange();range.selectNodeContents(textEl);range.collapse(false);const sel=window.getSelection();sel.removeAllRanges();sel.addRange(range);}
     });
+    const maxBottom=notes.reduce((m,n)=>Math.max(m,(n._y||0)+210),520);board.style.minHeight=maxBottom+'px';
     document.getElementById('noteCount').textContent=notes.length+' โน๊ต';
   }
   function selectNote(id){selectedId=id;const note=notes.find(n=>n.id===id);if(note){note._z=++highestZ;document.querySelectorAll('.sticky-note').forEach(el=>el.classList.toggle('selected',el.dataset.id===id));if(note){const el=board.querySelector('[data-id="'+CSS.escape(id)+'"]');if(el)el.style.zIndex=note._z;}}}
@@ -156,7 +158,7 @@
     const rect=el.getBoundingClientRect(),boardRect=board.getBoundingClientRect();
     drag={id:note.id,el,startX:e.clientX,startY:e.clientY,left:rect.left-boardRect.left,top:rect.top-boardRect.top};
     el.setPointerCapture?.(e.pointerId);
-    const move=ev=>{if(!drag||drag.id!==note.id)return;const pos=keepInside(drag.left+ev.clientX-drag.startX,drag.top+ev.clientY-drag.startY,el);el.style.left=pos.x+'px';el.style.top=pos.y+'px';note._x=pos.x;note._y=pos.y;};
+    const move=ev=>{if(!drag||drag.id!==note.id)return;const pos=keepInside(drag.left+ev.clientX-drag.startX,drag.top+ev.clientY-drag.startY,el);el.style.left=pos.x+'px';el.style.top=pos.y+'px';note._x=pos.x;note._y=pos.y;board.style.minHeight=Math.max(520,pos.y+el.offsetHeight+30)+'px';};
     const end=async()=>{if(!drag||drag.id!==note.id)return;drag=null;document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',end);await persistPosition(note);};
     document.addEventListener('pointermove',move);document.addEventListener('pointerup',end,{once:true});
   }
