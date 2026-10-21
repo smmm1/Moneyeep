@@ -158,7 +158,16 @@
       .auth-goal-illustration { height:52px; }
       .auth-preview-foot { margin-top:8px; }
     }
-  </style>
+  
+/* Shared navigation shell: match the Excelsior page */
+.app-layout{display:grid;grid-template-columns:230px minmax(0,1fr);min-height:100vh}
+.exercise-sidebar{position:sticky;top:0;height:100vh;padding:24px 16px;background:rgba(255,255,255,.86);border-right:1px solid #e3d2be;backdrop-filter:blur(12px);z-index:45}
+.exercise-sidebar a{display:flex;align-items:center;gap:11px;padding:12px 13px;border-radius:14px;font-size:13px;font-weight:700;color:#526452;margin-top:7px;text-decoration:none}
+.exercise-sidebar a:hover{background:#ecfdf5;color:#047857}
+.exercise-sidebar a.active{background:#d1fae5;color:#047857}
+.app-content{min-width:0}
+@media(max-width:760px){.app-layout{display:block}.exercise-sidebar{position:relative;height:auto;padding:10px 14px;border-right:0;border-bottom:1px solid #e3d2be;display:flex;align-items:center;gap:8px;overflow-x:auto}.exercise-sidebar .side-brand{display:none}.exercise-sidebar a{white-space:nowrap;margin:0;padding:10px 12px}.app-content header{position:relative}}
+</style>
 </head>
 <body class="pb-24">
 
