@@ -150,7 +150,23 @@ body{padding-bottom:2rem}
 .exercise-card{padding:clamp(16px,2vw,24px)}
 .exercise-wide{grid-column:1/-1}
 input,select,button{font:inherit}
-</style>
+
+/* Shared Moneyeep UI system — health page accent */
+:root{--ui-accent:#d95778;--ui-accent-soft:#fff0f3;--ui-accent-line:#f8c7d2;--ui-ink:#27352f;--ui-muted:#7b8a82;--ui-surface:rgba(255,255,255,.94);--ui-border:#e7ece6;--ui-radius:22px}
+body{background-color:#f7f8f4;background-image:radial-gradient(#dce8dd .7px,transparent .7px);background-size:18px 18px;color:var(--ui-ink)}
+.app-layout{grid-template-columns:236px minmax(0,1fr);gap:0}
+.exercise-sidebar{padding:24px 16px;background:rgba(255,255,255,.92);border-right:1px solid var(--ui-border);backdrop-filter:blur(16px)}
+.exercise-sidebar a{border-radius:14px;transition:background .18s,color .18s}
+.exercise-sidebar a:hover,.exercise-sidebar a.active{background:var(--ui-accent-soft);color:#be4566}
+.exercise-main{min-width:0}
+.exercise-shell{width:100%;max-width:1400px;margin-left:auto;margin-right:auto;padding-left:clamp(18px,3vw,36px);padding-right:clamp(18px,3vw,36px)}
+.exercise-shell>div.flex.items-center.justify-between.gap-3{padding:0 0 16px;border-bottom:1px solid var(--ui-border)}
+.exercise-shell .cream-card{border:1px solid var(--ui-border);border-radius:var(--ui-radius);box-shadow:0 8px 26px rgba(38,55,43,.055);background:var(--ui-surface)}
+.exercise-shell input,.exercise-shell select,.exercise-shell textarea{border-radius:12px}
+.exercise-shell button,.exercise-shell a.inline-flex{border-radius:12px}
+@media(max-width:760px){.app-layout{display:block}.exercise-sidebar{position:relative;height:auto;padding:10px 14px;border-right:0;border-bottom:1px solid var(--ui-border);display:flex;align-items:center;gap:8px;overflow-x:auto}.exercise-sidebar .side-brand{display:none}.exercise-sidebar a{white-space:nowrap;margin:0;padding:10px 12px}.exercise-shell{padding-left:16px;padding-right:16px}}
+
+  </style>
 </head>
 <body class="pb-8">
 <div class="app-layout">
