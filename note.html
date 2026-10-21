@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#fffbed">
-  <title>โน๊ต — ออมตัง</title>
+  <title>โน๊ต — NOTE SPACE</title>
   <link rel="icon" type="image/svg+xml" href="/note-icon.svg">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="this.onerror=null;this.src=&quot;https://unpkg.com/@supabase/supabase-js@2&quot;"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -76,7 +76,7 @@
 <body>
 <div class="app-layout">
   <aside class="sidebar">
-    <a class="brand" href="/"><span class="brand-icon"><i class="fa-regular fa-note-sticky"></i></span><span><b>ออมตัง</b><small>NOTE SPACE</small></span></a>
+    <a class="brand" href="/note.html" aria-label="หน้าโน๊ต"><span class="brand-icon"><i class="fa-regular fa-note-sticky"></i></span><span><b>โน๊ต</b><small>NOTE SPACE</small></span></a>
     <a class="nav-link" href="/"><i class="fa-solid fa-wallet"></i> ภาพรวมการออม</a>
     <a class="nav-link" href="/excelsior.html"><i class="fa-solid fa-dumbbell"></i> สุขภาพ & ออกกำลังกาย</a>
     <a class="nav-link active" href="/note.html" aria-current="page"><i class="fa-regular fa-note-sticky"></i> โน๊ต</a>
@@ -85,7 +85,10 @@
   </aside>
   <main class="main">
     <header class="topbar">
-      <div><p class="eyebrow">พื้นที่จดบันทึกส่วนตัว</p><h1>โน๊ต <i class="fa-regular fa-note-sticky" aria-hidden="true" style="color:#b99a37;margin-left:4px"></i></h1><p class="subhead">เขียนไว้ก่อน เดี๋ยวค่อยจัดการทีหลัง</p></div>
+      <div style="display:flex;align-items:center;gap:13px;min-width:0">
+        <span class="brand-icon" aria-hidden="true" style="width:46px;height:46px;flex-shrink:0;border-radius:15px;box-shadow:0 5px 14px #a8831218"><i class="fa-regular fa-note-sticky"></i></span>
+        <div style="min-width:0"><p class="eyebrow">NOTE SPACE · พื้นที่จดบันทึกส่วนตัว</p><h1>โน๊ต</h1><p class="subhead">เขียนไว้ก่อน เดี๋ยวค่อยจัดการทีหลัง</p></div>
+      </div>
       <button class="signout" id="signoutBtn" type="button"><i class="fa-solid fa-arrow-right-from-bracket"></i> ออกจากระบบ</button>
     </header>
     <div class="content">
