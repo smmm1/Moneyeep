@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#fff6bf">
+  <title>โน๊ต — ออมตัง</title>
+  <link rel="icon" type="image/svg+xml" href="/piggy-bank.svg">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--ink:#4c4328;--muted:#9b8e65;--yellow:#fff7c7;--line:#f1e5a2;--accent:#d6a91d;--sidebar:232px}
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;background:#fffdf4;color:var(--ink);font-family:'Sarabun','Plus Jakarta Sans',sans-serif}
+    button,textarea{font:inherit}
+    button{cursor:pointer}
+    .app-layout{display:grid;grid-template-columns:var(--sidebar) minmax(0,1fr);min-height:100vh}
+    .sidebar{position:sticky;top:0;height:100vh;padding:24px 16px;background:#fffef9;border-right:1px solid #f0e8c7;display:flex;flex-direction:column;gap:7px;z-index:10}
+    .brand{display:flex;align-items:center;gap:11px;padding:8px 9px 26px;text-decoration:none;color:#443d28}
+    .brand-icon{display:grid;place-items:center;width:42px;height:42px;border-radius:15px;background:#fff4b5;color:#a88312;font-size:20px}
+    .brand b{display:block;font-size:16px}.brand small{font-size:9px;letter-spacing:1.2px;color:#b1a57b}
+    .nav-link{display:flex;align-items:center;gap:11px;padding:12px 13px;border-radius:14px;text-decoration:none;font-size:13px;font-weight:700;color:#837750;transition:.18s}
+    .nav-link:hover{background:#fff9dd;color:#987512}.nav-link.active{background:#fff1a8;color:#7d6107}
+    .nav-link i{width:20px;text-align:center}
+    .side-label{margin:24px 12px 0;font-size:10px;font-weight:800;letter-spacing:1.5px;color:#b3a77f}
+    .side-copy{margin:2px 12px;font-size:12px;line-height:1.8;color:#b0a681}
+    .main{min-width:0;overflow:hidden}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px clamp(18px,4vw,48px);border-bottom:1px solid #f4edce;background:rgba(255,253,244,.9);backdrop-filter:blur(14px)}
+    .eyebrow{font-size:10px;letter-spacing:2px;font-weight:800;color:#b49a39;margin:0 0 5px}
+    h1{margin:0;font-size:clamp(22px,3vw,30px);letter-spacing:-.7px}
+    .subhead{margin:5px 0 0;font-size:12px;color:#a49a76}
+    .signout{border:1px solid #eee4b8;background:#fffef9;color:#8b7b43;border-radius:12px;padding:9px 12px;font-size:12px;font-weight:700}
+    .content{max-width:1400px;margin:0 auto;padding:clamp(18px,3vw,38px)}
+    .composer{max-width:900px;margin:0 auto 34px;display:flex;align-items:stretch;gap:0;border:1px solid #eee2a6;border-radius:20px;background:white;box-shadow:0 12px 32px #a38a2110;overflow:hidden;transition:box-shadow .2s,border-color .2s}
+    .composer:focus-within{border-color:#e4c54e;box-shadow:0 0 0 4px #f7e9a044,0 12px 32px #a38a2110}
+    .composer textarea{resize:vertical;min-height:62px;max-height:240px;flex:1;width:100%;min-width:0;border:0;outline:0;background:transparent;padding:19px 20px;color:#4b4329;font-size:14px;line-height:1.75}
+    .composer textarea::placeholder{color:#c0b58d}
+    .save-btn{align-self:stretch;display:flex;align-items:center;justify-content:center;gap:9px;border:0;background:#e8c746;color:#58440a;padding:0 22px;font-weight:800;font-size:13px;white-space:nowrap;transition:background .18s}
+    .save-btn:hover{background:#f0d65d}.save-btn:disabled{opacity:.55;cursor:wait}
+    .board-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px}
+    .board-title{font-size:13px;font-weight:800;color:#837342}.board-title span{color:#b5a66e;font-weight:500;margin-left:6px}
+    .board-tip{font-size:11px;color:#b3a77f}
+    .board{position:relative;min-height:520px;border:1px dashed #f0e5b8;border-radius:24px;background-color:#fffef8;background-image:radial-gradient(#e8ddb0 0.7px,transparent .7px);background-size:18px 18px;overflow:hidden;isolation:isolate}
+    .empty-state{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;color:#b7ab7f;pointer-events:none}
+    .empty-state .empty-icon{width:62px;height:62px;margin:0 auto 12px;display:grid;place-items:center;border-radius:22px;background:#fff8d8;color:#d4b333;font-size:25px}
+    .empty-state strong{display:block;font-size:14px;color:#9f915e;margin-bottom:5px}.empty-state p{font-size:12px;line-height:1.8;margin:0}
+    .sticky-note{position:absolute;width:min(270px,calc(100vw - 56px));min-height:190px;padding:0 15px 14px;background:#fff2a8;border:1px solid #f2df72;border-radius:3px 3px 9px 3px;box-shadow:2px 7px 14px #8b741d20,0 1px 2px #8b741d10;transform:rotate(var(--tilt,0deg));transform-origin:center;transition:box-shadow .18s,filter .18s;z-index:1;overflow-wrap:anywhere;touch-action:pan-y}
+    .sticky-note:before{content:"";position:absolute;top:0;left:0;right:0;height:8px;background:#e9cf4d55}
+    .sticky-note.selected{z-index:30!important;box-shadow:0 0 0 2px #d6ad20,0 14px 30px #79651c35;filter:saturate(1.04)}
+    .sticky-note.pinned:after{content:"";position:absolute;top:-7px;right:23px;width:13px;height:23px;border-radius:8px 8px 4px 4px;background:linear-gradient(90deg,#cf5b45,#f28b6d,#b94738);box-shadow:0 2px 4px #67402035;transform:rotate(9deg)}
+    .note-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:16px 0 10px;cursor:grab;user-select:none;touch-action:none}
+    .note-toolbar:active{cursor:grabbing}.note-number{font-size:10px;letter-spacing:1px;font-weight:800;color:#a38b24;opacity:.8}
+    .note-actions{display:flex;gap:3px}
+    .icon-btn{display:grid;place-items:center;width:28px;height:28px;border:0;border-radius:8px;background:transparent;color:#8d7b31;font-size:12px}
+    .icon-btn:hover{background:#f6e68b;color:#58440a}.icon-btn.danger:hover{background:#ffe1d9;color:#ad4636}
+    .note-text{width:100%;min-height:95px;white-space:pre-wrap;line-height:1.75;font-size:14px;color:#554a20;outline:none;cursor:text}
+    .note-text.editing{padding:8px;background:#fff9d8;border:1px solid #ead46a;border-radius:7px;min-height:110px;resize:vertical}
+    .note-footer{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;margin-top:12px;padding-top:9px;border-top:1px solid #d7bd4c55}
+    .note-date{font-size:9px;line-height:1.6;color:#9b8840;text-align:right;white-space:nowrap;margin-left:auto}
+    .note-date i{margin-right:4px}
+    .note-status{font-size:9px;color:#aa943f}
+    .note-editbar{display:flex;justify-content:flex-end;gap:6px;margin-top:8px}
+    .mini-btn{border:1px solid #ddc64c;background:#fff9d8;border-radius:8px;padding:5px 9px;font-size:10px;font-weight:800;color:#756017}
+    .mini-btn.primary{background:#d7b42e;color:#fff;border-color:#d7b42e}
+    .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#4d452d;color:#fff9db;border-radius:13px;padding:11px 16px;font-size:12px;box-shadow:0 8px 25px #51452230;transition:.25s;z-index:100}
+    .toast.show{opacity:1;transform:translate(-50%,0)}
+    .note-pop{animation:note-pop .42s cubic-bezier(.2,.9,.3,1.3) both}
+    @keyframes note-pop{0%{opacity:0;transform:translateY(22px) scale(.86) rotate(-4deg)}70%{opacity:1;transform:translateY(-3px) scale(1.025) rotate(1deg)}100%{opacity:1;transform:translateY(0) scale(1) rotate(var(--tilt,0deg))}}
+    @media(max-width:760px){:root{--sidebar:0px}.app-layout{display:block}.sidebar{position:sticky;top:0;height:auto;padding:7px 10px;border-right:0;border-bottom:1px solid #f0e8c7;display:flex;flex-direction:row;align-items:center;gap:5px;overflow-x:auto;white-space:nowrap;background:#fffef9}.brand{display:none}.nav-link{padding:10px 12px;flex-shrink:0;font-size:12px}.nav-link i{width:auto}.side-label,.side-copy{display:none}.topbar{padding:16px 18px}.content{padding:18px 13px}.composer{border-radius:16px}.composer textarea{padding:14px 12px;font-size:13px;min-height:58px}.save-btn{padding:0 14px;font-size:12px;gap:6px}.save-btn span{display:none}.board{min-height:540px}.sticky-note{width:min(250px,calc(100vw - 38px));min-height:180px}.board-tip{display:none}}
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+  </style>
+</head>
+<body>
+<div class="app-layout">
+  <aside class="sidebar">
+    <a class="brand" href="/"><span class="brand-icon"><i class="fa-solid fa-piggy-bank"></i></span><span><b>ออมตัง</b><small>PERSONAL SPACE</small></span></a>
+    <a class="nav-link" href="/"><i class="fa-solid fa-wallet"></i> ภาพรวมการออม</a>
+    <a class="nav-link" href="/excelsior.html"><i class="fa-solid fa-dumbbell"></i> สุขภาพ & ออกกำลังกาย</a>
+    <a class="nav-link active" href="/note.html" aria-current="page"><i class="fa-regular fa-note-sticky"></i> โน๊ต</a>
+    <div class="side-label">YOUR SPACE</div>
+    <p class="side-copy">พื้นที่เล็ก ๆ สำหรับไอเดียและสิ่งที่อยากจำ</p>
+  </aside>
+  <main class="main">
+    <header class="topbar">
+      <div><p class="eyebrow">A LITTLE SPACE FOR YOUR THOUGHTS</p><h1>โน๊ต <span aria-hidden="true">✳</span></h1><p class="subhead">เขียนไว้ก่อน เดี๋ยวค่อยจัดการทีหลัง</p></div>
+      <button class="signout" id="signoutBtn" type="button"><i class="fa-solid fa-arrow-right-from-bracket"></i> ออกจากระบบ</button>
+    </header>
+    <div class="content">
+      <form id="composer" class="composer">
+        <textarea id="noteInput" maxlength="10000" rows="1" aria-label="เขียนโน๊ต" placeholder="มีอะไรอยากจดไว้ไหม..."></textarea>
+        <button class="save-btn" id="saveBtn" type="submit"><i class="fa-solid fa-plus"></i><span>บันทึก</span></button>
+      </form>
+      <div class="board-head"><div class="board-title"><i class="fa-solid fa-thumbtack"></i> กระดานโน๊ต <span id="noteCount">0 โน๊ต</span></div><div class="board-tip"><i class="fa-solid fa-hand-pointer"></i> ลากหัวกระดาษเพื่อย้าย • แตะเพื่อเลือก</div></div>
+      <section id="board" class="board" aria-label="กระดานโพสต์อิท">
+        <div id="emptyState" class="empty-state"><div><div class="empty-icon"><i class="fa-regular fa-note-sticky"></i></div><strong>กระดานยังว่างอยู่เลย</strong><p>พิมพ์สิ่งที่อยากจำไว้ด้านบน แล้วกดบันทึก<br>โน๊ตของคุณจะมาแปะอยู่ตรงนี้</p></div></div>
+      </section>
+    </div>
+  </main>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script>
+  const SUPABASE_URL = 'https://daxukbbarrcrdkbwzlkg.supabase.co';
+  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_jwf8Gn_q1MxrusGYXOZgyQ_Vkbbf4eu';
+  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+  const board = document.getElementById('board');
+  const input = document.getElementById('noteInput');
+  const saveBtn = document.getElementById('saveBtn');
+  let currentUser = null, notes = [], selectedId = null, highestZ = 10, toastTimer = null;
+  const colors = ['#fff2a8','#ffef99','#fff5bc','#fceca0','#fff1ad'];
+  const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function showToast(message){const el=document.getElementById('toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2300);}
+  function formatDate(value){const d=new Date(value);return d.toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'numeric'})+' · '+d.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit',hour12:false})+' น.';}
+  function defaultPosition(index){const width=board.clientWidth||800;const cardWidth=270;const columns=Math.max(1,Math.floor((width-28)/(cardWidth+18)));return {x:14+(index%columns)*(cardWidth+18),y:20+Math.floor(index/columns)*225};}
+  function keepInside(x,y,card){const maxX=Math.max(0,board.clientWidth-card.offsetWidth-8);return {x:Math.min(Math.max(0,x),maxX),y:Math.max(0,y)};}
+  function sortNotes(){return [...notes].sort((a,b)=>(Number(b.is_pinned)-Number(a.is_pinned))||new Date(b.created_at)-new Date(a.created_at));}
+  async function loadNotes(){
+    const {data,error}=await db.from('finance_notes').select('*').order('created_at',{ascending:false});
+    if(error){showToast('โหลดโน๊ตไม่สำเร็จ กรุณาลองใหม่');console.error(error);return;}
+    notes=(data||[]).map((n,i)=>{const pos=(n.position_x===0&&n.position_y===0)?defaultPosition(i):{x:n.position_x,y:n.position_y};return {...n,_x:pos.x,_y:pos.y,_z:10+i};});
+    renderNotes();
+  }
+  function renderNotes(){
+    board.querySelectorAll('.sticky-note').forEach(el=>el.remove());
+    document.getElementById('emptyState').style.display=notes.length?'none':'flex';
+    document.getElementById('noteCount').textContent=notes.length+' โน๊ต';
+    sortNotes().forEach((note,index)=>{
+      const el=document.createElement('article');el.className='sticky-note'+(note.id===selectedId?' selected':'')+(note.is_pinned?' pinned':'');
+      el.dataset.id=note.id;el.style.left=(note._x??defaultPosition(index).x)+'px';el.style.top=(note._y??defaultPosition(index).y)+'px';el.style.zIndex=note._z||10;el.style.setProperty('--tilt',note.rotation+'deg');el.style.background=colors[index%colors.length];
+      const editing=note._editing===true;
+      el.innerHTML='<div class="note-toolbar" data-drag-handle="true"><span class="note-number">NOTE / '+String(index+1).padStart(2,'0')+'</span><div class="note-actions"><button class="icon-btn pin-btn" type="button" title="'+(note.is_pinned?'เลิกปักหมุด':'ปักหมุด')+'" aria-label="'+(note.is_pinned?'เลิกปักหมุด':'ปักหมุด')+'"><i class="fa-solid fa-thumbtack"></i></button><button class="icon-btn edit-btn" type="button" title="แก้ไข" aria-label="แก้ไขโน๊ต"><i class="fa-solid fa-pen"></i></button><button class="icon-btn danger delete-btn" type="button" title="ลบ" aria-label="ลบโน๊ต"><i class="fa-regular fa-trash-can"></i></button></div></div><div class="note-text '+(editing?'editing':'')+'" '+(editing?'contenteditable="true" role="textbox" aria-label="แก้ไขข้อความโน๊ต"':'')+'>'+escapeHTML(note.content)+'</div>'+(editing?'<div class="note-editbar"><button class="mini-btn cancel-edit" type="button">ยกเลิก</button><button class="mini-btn primary save-edit" type="button">บันทึกการแก้ไข</button></div>':'')+'<div class="note-footer"><span class="note-status">'+(note.is_pinned?'📌 ปักหมุดแล้ว':'')+'</span><span class="note-date"><i class="fa-regular fa-clock"></i>'+formatDate(note.created_at)+'</span></div>';
+      el.addEventListener('pointerdown',()=>selectNote(note.id),{passive:true});
+      el.querySelector('.pin-btn').addEventListener('click',()=>togglePin(note.id));
+      el.querySelector('.edit-btn').addEventListener('click',()=>startEdit(note.id));
+      el.querySelector('.delete-btn').addEventListener('click',()=>deleteNote(note.id));
+      if(editing){
+        el.querySelector('.cancel-edit').addEventListener('click',()=>{note._editing=false;renderNotes();});
+        el.querySelector('.save-edit').addEventListener('click',()=>saveEdit(note.id,el.querySelector('.note-text').innerText));
+        el.querySelector('.note-text').addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter')saveEdit(note.id,e.currentTarget.innerText);});
+      }
+      const handle=el.querySelector('[data-drag-handle]');
+      handle.addEventListener('pointerdown',e=>startDrag(e,note,el));
+      board.appendChild(el);
+      if(editing){const textEl=el.querySelector('.note-text');textEl.focus();const range=document.createRange();range.selectNodeContents(textEl);range.collapse(false);const sel=window.getSelection();sel.removeAllRanges();sel.addRange(range);}
+    });
+    document.getElementById('noteCount').textContent=notes.length+' โน๊ต';
+  }
+  function selectNote(id){selectedId=id;const note=notes.find(n=>n.id===id);if(note){note._z=++highestZ;document.querySelectorAll('.sticky-note').forEach(el=>el.classList.toggle('selected',el.dataset.id===id));if(note){const el=board.querySelector('[data-id="'+CSS.escape(id)+'"]');if(el)el.style.zIndex=note._z;}}}
+  let drag=null;
+  function startDrag(e,note,el){
+    if(e.button!==0||e.target.closest('button'))return;
+    if(note._editing)return;
+    e.preventDefault();selectNote(note.id);
+    const rect=el.getBoundingClientRect(),boardRect=board.getBoundingClientRect();
+    drag={id:note.id,el,startX:e.clientX,startY:e.clientY,left:rect.left-boardRect.left,top:rect.top-boardRect.top};
+    el.setPointerCapture?.(e.pointerId);
+    const move=ev=>{if(!drag||drag.id!==note.id)return;const pos=keepInside(drag.left+ev.clientX-drag.startX,drag.top+ev.clientY-drag.startY,el);el.style.left=pos.x+'px';el.style.top=pos.y+'px';note._x=pos.x;note._y=pos.y;};
+    const end=async()=>{if(!drag||drag.id!==note.id)return;drag=null;document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',end);await persistPosition(note);};
+    document.addEventListener('pointermove',move);document.addEventListener('pointerup',end,{once:true});
+  }
+  async function persistPosition(note){
+    const {error}=await db.from('finance_notes').update({position_x:Math.round(note._x||0),position_y:Math.round(note._y||0)}).eq('id',note.id);
+    if(error)showToast('ย้ายโน๊ตแล้ว แต่บันทึกตำแหน่งไม่สำเร็จ');
+  }
+  async function createNote(content){
+    const pos=defaultPosition(notes.length),rotation=Math.round((Math.random()*4-2)*10)/10;
+    const {data,error}=await db.from('finance_notes').insert({user_id:currentUser.id,content,is_pinned:false,position_x:pos.x,position_y:pos.y,rotation}).select().single();
+    if(error){showToast('บันทึกไม่สำเร็จ กรุณาลองใหม่');console.error(error);return;}
+    notes.unshift({...data,_x:pos.x,_y:pos.y,_z:++highestZ,_pop:true});selectedId=data.id;renderNotes();
+    const el=board.querySelector('[data-id="'+CSS.escape(data.id)+'"]');if(el)el.classList.add('note-pop');
+    input.value='';input.style.height='auto';showToast('บันทึกแล้ว แปะโน๊ตให้เรียบร้อย ✨');
+    setTimeout(()=>el?.classList.remove('note-pop'),500);
+  }
+  async function togglePin(id){const note=notes.find(n=>n.id===id);if(!note)return;const next=!note.is_pinned;const {error}=await db.from('finance_notes').update({is_pinned:next}).eq('id',id);if(error){showToast('เปลี่ยนหมุดไม่สำเร็จ');return;}note.is_pinned=next;selectedId=id;renderNotes();showToast(next?'ปักหมุดโน๊ตแล้ว':'เลิกปักหมุดแล้ว');}
+  function startEdit(id){const note=notes.find(n=>n.id===id);if(!note)return;notes.forEach(n=>n._editing=false);note._editing=true;selectedId=id;renderNotes();}
+  async function saveEdit(id,content){const clean=String(content||'').trim();if(!clean){showToast('โน๊ตห้ามว่างเปล่า');return;}if(clean.length>10000){showToast('ข้อความยาวเกิน 10,000 ตัวอักษร');return;}const {error}=await db.from('finance_notes').update({content:clean,updated_at:new Date().toISOString()}).eq('id',id);if(error){showToast('แก้ไขไม่สำเร็จ กรุณาลองใหม่');return;}const note=notes.find(n=>n.id===id);if(note){note.content=clean;note.updated_at=new Date().toISOString();note._editing=false;}renderNotes();showToast('บันทึกการแก้ไขแล้ว');}
+  async function deleteNote(id){if(!confirm('ลบโพสต์อิทนี้ใช่ไหม? ลบแล้วจะกู้คืนไม่ได้'))return;const {error}=await db.from('finance_notes').delete().eq('id',id);if(error){showToast('ลบไม่สำเร็จ กรุณาลองใหม่');return;}notes=notes.filter(n=>n.id!==id);if(selectedId===id)selectedId=null;renderNotes();showToast('ลบโน๊ตแล้ว');}
+  document.getElementById('composer').addEventListener('submit',async e=>{e.preventDefault();const content=input.value.trim();if(!content){input.focus();showToast('เขียนอะไรสักนิดก่อนบันทึกนะ');return;}saveBtn.disabled=true;try{await createNote(content);}finally{saveBtn.disabled=false;}});
+  input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,240)+'px';});
+  document.getElementById('signoutBtn').addEventListener('click',async()=>{await db.auth.signOut();location.href='/';});
+  board.addEventListener('click',e=>{if(e.target===board){selectedId=null;document.querySelectorAll('.sticky-note').forEach(el=>el.classList.remove('selected'));}});
+  async function init(){
+    const {data,error}=await db.auth.getSession();
+    if(error||!data.session){document.querySelector('.content').innerHTML='<div style="max-width:500px;margin:70px auto;text-align:center;padding:32px 20px;background:#fff;border:1px solid #f0e5b8;border-radius:24px"><div style="font-size:34px;color:#d6b52c;margin-bottom:14px"><i class="fa-solid fa-lock"></i></div><h2 style="font-size:19px;font-weight:800;margin:0 0 8px">เข้าสู่ระบบก่อนใช้งานโน๊ต</h2><p style="font-size:13px;line-height:1.8;color:#a49a76;margin:0 0 20px">โน๊ตของคุณจะถูกเก็บในฐานข้อมูลส่วนตัว และมีเพียงบัญชีของคุณที่เข้าถึงได้</p><a href="/" style="display:inline-block;padding:11px 18px;border-radius:12px;background:#e8c746;color:#58440a;font-size:13px;font-weight:800;text-decoration:none">ไปหน้าเข้าสู่ระบบ</a></div>';document.getElementById('signoutBtn').style.display='none';return;}
+    currentUser=data.session.user;await loadNotes();
+    db.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'||!session)location.href='/';});
+  }
+  window.addEventListener('resize',()=>{notes.forEach(n=>{const el=board.querySelector('[data-id="'+CSS.escape(n.id)+'"]');if(!el)return;const pos=keepInside(n._x||0,n._y||0,el);n._x=pos.x;el.style.left=pos.x+'px';});});
+  init();
+</script>
+</body>
+</html>
