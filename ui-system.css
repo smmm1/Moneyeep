@@ -896,3 +896,31 @@ body.ui-page-notes .redesign-notes-simple>.redesign-page-heading {
     margin:14px 16px 0!important;
   }
 }
+
+
+/* Health header structure: only the slim topbar is sticky; the hero scrolls with page content. */
+body.ui-page-health .exercise-main>.ui-health-topbar-shell {
+  position:sticky!important;top:0!important;z-index:60!important;width:100%!important;
+  margin:0!important;padding:8px clamp(16px,3vw,32px)!important;
+  background:rgba(255,254,250,.97)!important;border-bottom:1px solid #e7e5dc!important;
+  box-shadow:0 3px 12px rgba(37,41,35,.035)!important;
+  backdrop-filter:blur(12px)!important;-webkit-backdrop-filter:blur(12px)!important;
+}
+body.ui-page-health .ui-health-topbar-shell>.ui-topbar-inner {
+  display:flex!important;align-items:center!important;justify-content:space-between!important;gap:14px!important;
+  width:100%!important;max-width:1152px!important;min-height:48px!important;margin:0 auto!important;padding:0!important;
+  border:0!important;background:transparent!important;box-shadow:none!important;
+}
+body.ui-page-health .exercise-main>header.ui-health-header {
+  position:relative!important;top:auto!important;z-index:auto!important;display:block!important;
+  width:100%!important;margin:0!important;padding:0!important;background:transparent!important;
+  border:0!important;box-shadow:none!important;overflow:visible!important;
+}
+body.ui-page-health .exercise-main>header.ui-health-header>.redesign-health-hero {
+  max-width:1152px!important;margin:18px auto 0!important;
+}
+@media(max-width:760px) {
+  body.ui-page-health .exercise-main>.ui-health-topbar-shell {padding:8px 14px!important}
+  body.ui-page-health .ui-health-topbar-shell>.ui-topbar-inner {min-height:44px!important;gap:8px!important}
+  body.ui-page-health .exercise-main>header.ui-health-header>.redesign-health-hero {margin:14px 16px 0!important}
+}
