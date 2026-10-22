@@ -1,615 +1,189 @@
-/* Moneyeep shared UI system v1 — one layout, three page accents */
-:root {
-  --ui-ink: #26352e;
-  --ui-muted: #77867d;
-  --ui-line: #e5ebe5;
-  --ui-surface: rgba(255,255,255,.94);
-  --ui-surface-soft: #f8faf7;
-  --ui-radius: 22px;
-  --ui-radius-sm: 14px;
-  --ui-shadow: 0 8px 28px rgba(38,53,46,.055);
-  --ui-accent: #059669;
-  --ui-accent-strong: #047857;
-  --ui-accent-soft: #ecfdf5;
-  --ui-accent-line: #a7f3d0;
+/* Moneyeep shared UI system — one consistent shell across savings, health and notes.
+   Page-specific functionality stays in each HTML file; this file owns shared presentation. */
+:root{
+  --ui-ink:#292c26;
+  --ui-muted:#777b72;
+  --ui-line:#e7e5dc;
+  --ui-page:#f7f6f2;
+  --ui-card:#fffefa;
+  --ui-input:#fbfaf6;
+  --ui-radius:14px;
+  --ui-radius-sm:9px;
+  --ui-shadow:0 3px 14px rgba(37,41,35,.035);
+  --ui-accent:#69765c;
+  --ui-accent-strong:#4f5d43;
+  --ui-accent-soft:#f0f2eb;
+  --ui-accent-line:#dce2d3;
 }
-body.ui-page-health {
-  --ui-accent: #e11d48;
-  --ui-accent-strong: #be123c;
-  --ui-accent-soft: #fff1f2;
-  --ui-accent-line: #fecdd3;
+body.ui-page-health{--ui-accent:#77776b;--ui-accent-strong:#5e5d52;--ui-accent-soft:#f0efe9;--ui-accent-line:#dfddd2}
+body.ui-page-notes{--ui-accent:#9b8961;--ui-accent-strong:#776744;--ui-accent-soft:#f5f1e7;--ui-accent-line:#e8dfc9}
+body.ui-page-savings,body.ui-page-health,body.ui-page-notes{
+  margin:0!important;min-height:100vh;background:var(--ui-page)!important;background-image:none!important;
+  color:var(--ui-ink)!important;font-family:"Sarabun","Plus Jakarta Sans",sans-serif;
 }
-body.ui-page-notes {
-  --ui-accent: #c5a32d;
-  --ui-accent-strong: #8d7011;
-  --ui-accent-soft: #fff9df;
-  --ui-accent-line: #eee0a3;
+body.ui-page-savings *,body.ui-page-health *,body.ui-page-notes *{box-sizing:border-box;scrollbar-color:#d4d2c8 transparent}
+body.ui-page-savings .app-layout,body.ui-page-health .app-layout,body.ui-page-notes .app-layout{
+  display:grid!important;grid-template-columns:224px minmax(0,1fr)!important;gap:0!important;min-height:100vh;width:100%;
 }
-body.ui-page-savings, body.ui-page-health, body.ui-page-notes {
-  color: var(--ui-ink);
-  background-color: #f7f8f5;
-  background-image: radial-gradient(#dfe7df .7px, transparent .7px);
-  background-size: 18px 18px;
+/* Shared left navigation */
+body.ui-page-savings .exercise-sidebar,body.ui-page-health .exercise-sidebar,body.ui-page-notes .sidebar{
+  position:sticky!important;top:0!important;align-self:start;width:auto!important;min-width:0!important;height:100vh!important;
+  min-height:0!important;margin:0!important;padding:24px 15px!important;display:flex!important;flex-direction:column!important;
+  align-items:stretch!important;gap:7px!important;overflow-x:hidden!important;overflow-y:auto!important;
+  background:#fbfaf6!important;border:0!important;border-right:1px solid var(--ui-line)!important;border-radius:0!important;
+  box-shadow:none!important;backdrop-filter:none!important;z-index:30;
 }
-body.ui-page-savings *, body.ui-page-health *, body.ui-page-notes * {
-  scrollbar-color: #cbd6cc transparent;
+body.ui-page-savings .exercise-sidebar .side-brand,body.ui-page-health .exercise-sidebar .side-brand,body.ui-page-notes .sidebar .brand{
+  display:flex!important;align-items:center!important;gap:11px!important;margin:0 0 18px!important;padding:8px 9px 18px!important;
+  border:0!important;background:transparent!important;color:var(--ui-ink)!important;text-decoration:none!important;
 }
-body.ui-page-savings .app-layout,
-body.ui-page-health .app-layout,
-body.ui-page-notes .app-layout {
-  display: grid;
-  grid-template-columns: 236px minmax(0, 1fr);
-  gap: 0;
-  min-height: 100vh;
+body.ui-page-savings .exercise-sidebar .side-brand>span:first-child,body.ui-page-health .exercise-sidebar .side-brand>span:first-child,
+body.ui-page-notes .sidebar .brand-icon{
+  display:grid;place-items:center;width:38px!important;height:38px!important;flex:0 0 38px!important;
+  border-radius:10px!important;background:var(--ui-accent-soft)!important;color:var(--ui-accent-strong)!important;
+  box-shadow:none!important;font-size:16px;
 }
-body.ui-page-savings .exercise-sidebar,
-body.ui-page-health .exercise-sidebar,
-body.ui-page-notes .sidebar {
-  position: sticky;
-  top: 0;
-  z-index: 30;
-  box-sizing: border-box;
-  width: auto;
-  height: 100vh;
-  min-width: 0;
-  padding: 24px 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 7px;
-  overflow-x: hidden;
-  overflow-y: auto;
-  background: rgba(255,255,255,.93);
-  border: 0;
-  border-right: 1px solid var(--ui-line);
-  box-shadow: none;
-  backdrop-filter: blur(16px);
+body.ui-page-savings .exercise-sidebar .side-brand b,body.ui-page-health .exercise-sidebar .side-brand b,
+body.ui-page-notes .sidebar .brand b{display:block;color:var(--ui-ink)!important;font-size:14px!important;font-weight:700!important}
+body.ui-page-savings .exercise-sidebar .side-brand small,body.ui-page-health .exercise-sidebar .side-brand small,
+body.ui-page-notes .sidebar .brand small{color:var(--ui-muted)!important;font-size:9px!important;letter-spacing:1px!important}
+body.ui-page-savings .exercise-sidebar>a:not(.side-brand),body.ui-page-health .exercise-sidebar>a:not(.side-brand),
+body.ui-page-notes .sidebar .nav-link{
+  display:flex!important;align-items:center!important;gap:11px!important;min-height:42px!important;flex:0 0 auto;
+  margin:0!important;padding:10px 12px!important;border:0!important;border-radius:9px!important;background:transparent!important;
+  color:#6e7169!important;font-size:13px!important;font-weight:600!important;line-height:1.4!important;text-decoration:none!important;
+  transition:background .16s ease,color .16s ease;
 }
-body.ui-page-savings .exercise-sidebar > a:not(.side-brand),
-body.ui-page-health .exercise-sidebar > a:not(.side-brand),
-body.ui-page-notes .sidebar .nav-link {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  min-height: 44px;
-  margin: 0;
-  padding: 11px 13px;
-  border: 0;
-  border-radius: var(--ui-radius-sm);
-  background: transparent;
-  color: #607067;
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 1.4;
-  text-decoration: none;
-  transition: background .18s ease, color .18s ease, transform .18s ease;
+body.ui-page-savings .exercise-sidebar>a.active,body.ui-page-health .exercise-sidebar>a.active,body.ui-page-notes .sidebar .nav-link.active,
+body.ui-page-savings .exercise-sidebar>a:hover,body.ui-page-health .exercise-sidebar>a:hover,body.ui-page-notes .sidebar .nav-link:hover{
+  background:var(--ui-accent-soft)!important;color:var(--ui-accent-strong)!important;
 }
-body.ui-page-savings .exercise-sidebar > a:not(.side-brand):hover,
-body.ui-page-health .exercise-sidebar > a:not(.side-brand):hover,
-body.ui-page-notes .sidebar .nav-link:hover {
-  background: var(--ui-accent-soft);
-  color: var(--ui-accent-strong);
+body.ui-page-savings .exercise-sidebar>div:not(.side-brand),body.ui-page-health .exercise-sidebar>div:not(.side-brand),
+body.ui-page-notes .sidebar .side-label{margin:22px 12px 0!important;padding:0!important;color:#92948b!important;font-size:10px!important;font-weight:700!important;letter-spacing:1.2px!important}
+body.ui-page-savings .exercise-sidebar>p,body.ui-page-health .exercise-sidebar>p,body.ui-page-notes .sidebar .side-copy{
+  margin:2px 12px!important;padding:0!important;color:#92948b!important;font-size:11px!important;line-height:1.8!important
 }
-body.ui-page-savings .exercise-sidebar > a.active,
-body.ui-page-health .exercise-sidebar > a.active,
-body.ui-page-notes .sidebar .nav-link.active {
-  background: var(--ui-accent-soft);
-  color: var(--ui-accent-strong);
-}
-body.ui-page-savings .exercise-sidebar .side-brand,
-body.ui-page-health .exercise-sidebar .side-brand,
-body.ui-page-notes .sidebar .brand {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  margin: 0 0 18px !important;
-  padding: 8px 9px 20px !important;
-  border: 0;
-  background: transparent;
-  color: var(--ui-ink);
-  text-decoration: none;
-}
-body.ui-page-savings .exercise-sidebar .side-brand > span:first-child,
-body.ui-page-health .exercise-sidebar .side-brand > span:first-child,
-body.ui-page-notes .sidebar .brand-icon {
-  display: grid;
-  place-items: center;
-  width: 42px;
-  height: 42px;
-  flex: 0 0 42px;
-  border-radius: 14px;
-  background: var(--ui-accent-soft);
-  color: var(--ui-accent-strong);
-  box-shadow: none;
-}
-body.ui-page-savings .exercise-sidebar .side-brand b,
-body.ui-page-health .exercise-sidebar .side-brand b,
-body.ui-page-notes .sidebar .brand b {
-  color: var(--ui-ink);
-  font-size: 15px;
-  font-weight: 800;
-}
-body.ui-page-savings .exercise-sidebar .side-brand small,
-body.ui-page-health .exercise-sidebar .side-brand small,
-body.ui-page-notes .sidebar .brand small {
-  color: var(--ui-muted);
-  font-size: 9px;
-  letter-spacing: 1.2px;
-}
-body.ui-page-savings .exercise-sidebar > div:not(.side-brand),
-body.ui-page-health .exercise-sidebar > div:not(.side-brand),
-body.ui-page-notes .sidebar .side-label {
-  margin: 22px 12px 0;
-  padding: 0;
-  color: var(--ui-muted);
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 1.5px;
-}
-body.ui-page-savings .exercise-sidebar > p,
-body.ui-page-health .exercise-sidebar > p,
-body.ui-page-notes .sidebar .side-copy {
-  margin: 2px 12px;
-  padding: 0;
-  color: var(--ui-muted);
-  font-size: 12px;
-  line-height: 1.8;
-}
-body.ui-page-savings .app-content,
-body.ui-page-health .exercise-main,
-body.ui-page-notes .main {
-  min-width: 0;
-  width: 100%;
-  overflow: hidden;
-}
-body.ui-page-savings .app-content > header,
-body.ui-page-notes .topbar {
-  position: sticky;
-  top: 0;
-  z-index: 25;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  min-height: 82px;
-  margin: 0;
-  padding: 16px clamp(18px, 3vw, 36px);
-  border: 0;
-  border-bottom: 1px solid var(--ui-line);
-  border-radius: 0;
-  background: rgba(255,255,255,.92);
-  box-shadow: 0 4px 18px rgba(38,53,46,.035);
-  backdrop-filter: blur(16px);
-}
-body.ui-page-health .exercise-main > header {
-  position: relative;
-  display: block;
-  min-height: 0;
-  margin: 0 auto;
-  padding: 16px clamp(18px, 3vw, 36px) 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-  backdrop-filter: none;
-}
-body.ui-page-savings .app-content > header h1,
-body.ui-page-health .exercise-main > header > div:first-child h1,
-body.ui-page-notes .topbar h1 {
-  color: var(--ui-ink);
-  font-size: clamp(21px, 2.5vw, 28px);
-  font-weight: 800;
-  line-height: 1.25;
-  letter-spacing: -.55px;
-}
-body.ui-page-savings .app-content > header p,
-body.ui-page-health .exercise-main > header > div:first-child p,
-body.ui-page-notes .topbar .eyebrow,
-body.ui-page-notes .topbar .subhead {
-  color: var(--ui-muted);
-}
-body.ui-page-savings .app-content > header .rounded-2xl,
-body.ui-page-health .exercise-main > header > div:first-child .rounded-2xl,
-body.ui-page-notes .topbar .brand-icon {
-  border-radius: 15px;
-  background: var(--ui-accent-soft);
-  color: var(--ui-accent-strong);
-  box-shadow: none;
-}
-body.ui-page-savings .app-content > header a,
-body.ui-page-health .exercise-main > header a,
-body.ui-page-notes .topbar .signout {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-height: 40px;
-  padding: 9px 13px;
-  border: 1px solid var(--ui-line);
-  border-radius: 12px;
-  background: #fff;
-  color: var(--ui-accent-strong);
-  font-size: 12px;
-  font-weight: 800;
-  text-decoration: none;
-}
-body.ui-page-savings .app-content > header a:hover,
-body.ui-page-health .exercise-main > header a:hover,
-body.ui-page-notes .topbar .signout:hover {
-  background: var(--ui-accent-soft);
-  border-color: var(--ui-accent-line);
-}
-body.ui-page-savings .app-content .cream-card,
-body.ui-page-health .exercise-main .cream-card,
-body.ui-page-notes .composer {
-  border: 1px solid var(--ui-line);
-  border-radius: var(--ui-radius);
-  background: var(--ui-surface);
-  box-shadow: var(--ui-shadow);
-}
-body.ui-page-savings .app-content .cream-input,
-body.ui-page-health .exercise-main .cream-input,
-body.ui-page-notes .composer textarea,
-body.ui-page-notes .note-text.editing {
-  border-color: var(--ui-line);
-  border-radius: 12px;
-  background: var(--ui-surface-soft);
-  color: var(--ui-ink);
-}
-body.ui-page-savings .app-content .cream-input:focus,
-body.ui-page-health .exercise-main .cream-input:focus,
-body.ui-page-notes .composer:focus-within,
-body.ui-page-notes .note-text.editing:focus {
-  border-color: var(--ui-accent-line);
-  outline: none;
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--ui-accent-soft) 85%, transparent);
-}
-body.ui-page-savings .app-content button,
-body.ui-page-health .exercise-main button,
-body.ui-page-notes .content button {
-  transition: background-color .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease;
-}
-body.ui-page-savings .app-content button:focus-visible,
-body.ui-page-health .exercise-main button:focus-visible,
-body.ui-page-notes .content button:focus-visible,
-body.ui-page-savings .exercise-sidebar a:focus-visible,
-body.ui-page-health .exercise-sidebar a:focus-visible,
-body.ui-page-notes .sidebar a:focus-visible {
-  outline: 3px solid var(--ui-accent-line);
-  outline-offset: 2px;
-}
-body.ui-page-savings .app-content .rounded-3xl,
-body.ui-page-health .exercise-main .rounded-3xl {
-  border-radius: var(--ui-radius);
-}
-body.ui-page-savings .app-content .bg-emerald-600,
-body.ui-page-savings .app-content .hover\:bg-emerald-700:hover {
-  background-color: var(--ui-accent-strong);
-}
-body.ui-page-health .exercise-main .bg-rose-600,
-body.ui-page-health .exercise-main .hover\:bg-rose-700:hover {
-  background-color: var(--ui-accent-strong);
-}
-body.ui-page-notes .content {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 24px clamp(18px, 3vw, 36px);
-}
-body.ui-page-notes .composer {
-  max-width: none;
-  margin: 0 0 24px;
-  overflow: hidden;
-}
-body.ui-page-notes .composer textarea {
-  border: 0;
-  border-radius: 0;
-}
-body.ui-page-notes .save-btn {
-  background: var(--ui-accent-soft);
-  color: var(--ui-accent-strong);
-}
-body.ui-page-notes .save-btn:hover {
-  background: var(--ui-accent-line);
-}
-body.ui-page-notes .board {
-  border-color: var(--ui-line);
-  border-radius: var(--ui-radius);
-  background-color: rgba(255,255,255,.58);
-  background-image: radial-gradient(#dfe7df .7px, transparent .7px);
-}
-body.ui-page-notes .board-title,
-body.ui-page-notes .board-title span,
-body.ui-page-notes .eyebrow {
-  color: var(--ui-accent-strong);
-}
-body.ui-page-savings .app-content main,
-body.ui-page-health .exercise-main main {
-  max-width: none;
-}
-@media (max-width: 760px) {
-  body.ui-page-savings .app-layout,
-  body.ui-page-health .app-layout,
-  body.ui-page-notes .app-layout {
-    display: block;
-    min-height: 100vh;
-  }
-  body.ui-page-savings .exercise-sidebar,
-  body.ui-page-health .exercise-sidebar,
-  body.ui-page-notes .sidebar {
-    position: sticky;
-    top: 0;
-    z-index: 40;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    width: 100%;
-    height: auto;
-    min-height: 56px;
-    padding: 7px 10px;
-    gap: 5px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    white-space: nowrap;
-    border-right: 0;
-    border-bottom: 1px solid var(--ui-line);
-  }
-  body.ui-page-savings .exercise-sidebar .side-brand,
-  body.ui-page-health .exercise-sidebar .side-brand,
-  body.ui-page-notes .sidebar .brand,
-  body.ui-page-savings .exercise-sidebar > div:not(.side-brand),
-  body.ui-page-health .exercise-sidebar > div:not(.side-brand),
-  body.ui-page-savings .exercise-sidebar > p,
-  body.ui-page-health .exercise-sidebar > p,
-  body.ui-page-notes .sidebar .side-label,
-  body.ui-page-notes .sidebar .side-copy {
-    display: none;
-  }
-  body.ui-page-savings .exercise-sidebar > a:not(.side-brand),
-  body.ui-page-health .exercise-sidebar > a:not(.side-brand),
-  body.ui-page-notes .sidebar .nav-link {
-    flex: 0 0 auto;
-    min-height: 40px;
-    padding: 9px 12px;
-    font-size: 12px;
-  }
-  body.ui-page-savings .app-content > header,
-  body.ui-page-notes .topbar {
-    position: relative;
-    min-height: 70px;
-    padding: 14px 16px;
-    gap: 10px;
-  }
-  body.ui-page-health .exercise-main > header {
-    padding: 14px 16px 0;
-  }
-  body.ui-page-savings .app-content > header h1,
-  body.ui-page-health .exercise-main > header h1,
-  body.ui-page-notes .topbar h1 {
-    font-size: 21px;
-  }
-  body.ui-page-savings .app-content > header a,
-  body.ui-page-health .exercise-main > header a,
-  body.ui-page-notes .topbar .signout {
-    flex: 0 0 auto;
-    padding: 9px 10px;
-    font-size: 11px;
-  }
-  body.ui-page-savings .app-content main,
-  body.ui-page-health .exercise-main main,
-  body.ui-page-notes .content {
-    padding: 16px 13px;
-  }
-  body.ui-page-notes .composer {
-    flex-direction: row;
-    border-radius: 16px;
-  }
-  body.ui-page-notes .composer textarea {
-    min-height: 58px;
-    padding: 14px 12px;
-  }
-  body.ui-page-notes .save-btn {
-    display: flex;
-    align-items: center;
-    padding: 0 14px;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  body.ui-page-savings *, body.ui-page-health *, body.ui-page-notes * {
-    scroll-behavior: auto !important;
-    transition-duration: .01ms !important;
-    animation-duration: .01ms !important;
-    animation-iteration-count: 1 !important;
-  }
-}
-
-/* Keep the health page's welcome panel in the same card language as the other pages. */
-body.ui-page-health .exercise-main > header > div.mt-5.rounded-3xl {
-  background: var(--ui-surface) !important;
-  color: var(--ui-ink) !important;
-  border: 1px solid var(--ui-line);
-  border-radius: var(--ui-radius);
-  box-shadow: var(--ui-shadow) !important;
-}
-body.ui-page-health .exercise-main > header > div.mt-5.rounded-3xl p,
-body.ui-page-health .exercise-main > header > div.mt-5.rounded-3xl h1 {
-  color: var(--ui-ink) !important;
-  opacity: 1;
-}
-body.ui-page-health .exercise-main > header > div.mt-5.rounded-3xl p:first-child {
-  color: var(--ui-accent-strong) !important;
-}
-body.ui-page-health .exercise-main > header > div.mt-5.rounded-3xl h1 {
-  font-size: clamp(22px, 2.5vw, 30px);
-  letter-spacing: -.5px;
-}
-body.ui-page-savings .app-content .cream-card,
-body.ui-page-health .exercise-main .cream-card {
-  border-color: var(--ui-line);
-  border-radius: var(--ui-radius);
-  box-shadow: var(--ui-shadow);
-}
-body.ui-page-savings .app-content button:not(.unstyled),
-body.ui-page-health .exercise-main button,
-body.ui-page-notes .content button {
-  font-weight: 700;
-}
-
-/* Minimal unified layout: shared top bar and quieter surfaces */
-:root{--ui-line:#e7ebe7;--ui-surface:#fff;--ui-surface-soft:#f8faf8;--ui-radius:16px;--ui-radius-sm:10px;--ui-shadow:0 2px 10px rgba(25,45,33,.035)}
-body.ui-page-savings,body.ui-page-health,body.ui-page-notes{background:#f7f8f7!important;background-image:none!important}
-body.ui-page-savings .exercise-sidebar,body.ui-page-health .exercise-sidebar,body.ui-page-notes .sidebar{background:#fff;backdrop-filter:none;padding-top:18px}
-body.ui-page-savings .app-content>header,body.ui-page-health .exercise-main>header,body.ui-page-notes .topbar{position:sticky;top:0;z-index:25;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:70px;margin:0;padding:12px clamp(16px,2.5vw,30px);border:0;border-bottom:1px solid var(--ui-line);border-radius:0;background:#fff;box-shadow:none;backdrop-filter:none}
-body.ui-page-health .exercise-main>header{display:block;padding-top:0;padding-bottom:0}
-body.ui-page-health .exercise-main>header>div:first-child{min-height:70px;display:flex;align-items:center;justify-content:space-between;gap:16px}
-body.ui-page-health .exercise-main>header>div.mt-5.rounded-3xl{margin-top:0!important;padding:18px 22px!important;border:0;border-bottom:1px solid var(--ui-line);border-radius:0!important;background:#f7f8f7!important;box-shadow:none!important}
-body.ui-page-savings .app-content>header h1,body.ui-page-health .exercise-main>header h1,body.ui-page-notes .topbar h1{font-size:clamp(19px,2vw,23px);font-weight:700;letter-spacing:-.25px;line-height:1.3}
-body.ui-page-savings .app-content>header p,body.ui-page-health .exercise-main>header p,body.ui-page-notes .topbar .eyebrow,body.ui-page-notes .topbar .subhead{font-size:12px;letter-spacing:0}
-body.ui-page-savings .app-content>header .rounded-2xl,body.ui-page-health .exercise-main>header>div:first-child .rounded-2xl,body.ui-page-notes .topbar .brand-icon{width:36px!important;height:36px!important;border-radius:10px!important;box-shadow:none!important}
-body.ui-page-savings .app-content>header a,body.ui-page-health .exercise-main>header a,body.ui-page-notes .topbar .signout{min-height:36px;padding:8px 11px;border-radius:9px;background:#fff;box-shadow:none;font-size:12px}
-body.ui-page-savings .app-content .cream-card,body.ui-page-health .exercise-main .cream-card,body.ui-page-notes .composer,body.ui-page-notes .board{border:1px solid var(--ui-line);border-radius:14px;background:#fff;box-shadow:none;backdrop-filter:none}
-body.ui-page-savings .app-content .cream-input,body.ui-page-health .exercise-main .cream-input,body.ui-page-notes .composer textarea,body.ui-page-notes .note-text.editing{border-radius:9px;background:#fff}
-body.ui-page-savings .app-content .rounded-3xl,body.ui-page-health .exercise-main .rounded-3xl{border-radius:14px}
-body.ui-page-savings .app-content .shadow-sm,body.ui-page-savings .app-content .shadow-md,body.ui-page-savings .app-content .shadow-lg,body.ui-page-health .exercise-main .shadow-sm,body.ui-page-health .exercise-main .shadow-md,body.ui-page-health .exercise-main .shadow-lg{box-shadow:none!important}
-body.ui-page-savings .app-content main,body.ui-page-health .exercise-main main,body.ui-page-notes .content{padding-top:22px}
-body.ui-page-notes .topbar>div:first-child{gap:10px!important}
-body.ui-page-notes .topbar .eyebrow{margin-bottom:2px}
-body.ui-page-notes .topbar .subhead{margin-top:2px}
-body.ui-page-notes .board{background-image:none}
-body.ui-page-savings .auth-screen{background:#f7f8f7}
-body.ui-page-savings .auth-orb,body.ui-page-savings .auth-spark,body.ui-page-savings .auth-coin,body.ui-page-savings .auth-floating-note,body.ui-page-savings .auth-hero-art{display:none!important}
-body.ui-page-savings .auth-layout{min-height:0;border:1px solid var(--ui-line);border-radius:18px;background:#fff;box-shadow:none;backdrop-filter:none}
-body.ui-page-savings .auth-welcome{background:#f5f8f3}
-body.ui-page-savings .auth-form-side{background:#fff}
-body.ui-page-savings .auth-submit{background:var(--ui-accent-strong);border-radius:10px;box-shadow:none}
-body.ui-page-savings .auth-input-wrap{border-radius:10px}
-@media(max-width:760px){
-body.ui-page-savings .app-content>header,body.ui-page-health .exercise-main>header,body.ui-page-notes .topbar{position:relative;min-height:62px;padding:10px 14px;gap:9px}
-body.ui-page-health .exercise-main>header>div:first-child{min-height:62px;gap:10px}
-body.ui-page-health .exercise-main>header>div.mt-5.rounded-3xl{padding:14px!important}
-body.ui-page-savings .app-content>header h1,body.ui-page-health .exercise-main>header h1,body.ui-page-notes .topbar h1{font-size:18px}
-body.ui-page-savings .app-content>header p,body.ui-page-health .exercise-main>header p,body.ui-page-notes .topbar .eyebrow,body.ui-page-notes .topbar .subhead{font-size:11px}
-body.ui-page-savings .app-content>header a,body.ui-page-health .exercise-main>header a,body.ui-page-notes .topbar .signout{padding:7px 9px;font-size:11px}
-body.ui-page-savings .auth-layout{border-radius:14px}
-}
-
-
-/* Header / Top Bar redesign v2 — remove the bar treatment on every app page */
-body.ui-page-savings .app-content>header,
-body.ui-page-health .exercise-main>header,
-body.ui-page-notes .topbar{
-  position:relative!important;top:auto!important;z-index:1!important;
-  display:block!important;min-height:0!important;width:auto!important;
-  margin:0!important;padding:20px clamp(16px,3vw,32px) 12px!important;
-  border:0!important;border-radius:0!important;
-  background:transparent!important;box-shadow:none!important;
+/* Main column and one shared page heading */
+body.ui-page-savings .app-content,body.ui-page-health .exercise-main,body.ui-page-notes .main{min-width:0!important;width:100%!important;overflow:hidden!important}
+body.ui-page-savings .app-content>header,body.ui-page-health .exercise-main>header,body.ui-page-notes .topbar{
+  position:relative!important;inset:auto!important;z-index:2!important;display:block!important;width:100%!important;min-height:0!important;
+  margin:0!important;padding:26px clamp(20px,3.5vw,44px) 12px!important;border:0!important;border-radius:0!important;
+  border-bottom:1px solid transparent!important;background:transparent!important;box-shadow:none!important;
   backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
 }
-body.ui-page-savings .app-content>header>div.max-w-6xl,
-body.ui-page-health .exercise-main>header>div:first-child,
+body.ui-page-savings .app-content>header>div.max-w-6xl,body.ui-page-health .exercise-main>header>div:first-child,
 body.ui-page-notes .topbar>div:first-child{
-  max-width:1280px!important;margin:0 auto!important;
-  min-height:0!important;display:flex!important;align-items:center!important;
-  justify-content:space-between!important;gap:12px!important;
+  width:100%!important;max-width:1280px!important;min-height:0!important;margin:0 auto!important;
+  display:flex!important;align-items:center!important;justify-content:space-between!important;gap:14px!important;
 }
-body.ui-page-savings .app-content>header h1,
-body.ui-page-health .exercise-main>header>div:first-child p:not(.text-\[10px\]),
+body.ui-page-savings .app-content>header h1,body.ui-page-health .exercise-main>header>div:first-child p:not(.text-\[10px\]),
 body.ui-page-notes .topbar h1{
-  font-size:clamp(18px,2vw,22px)!important;font-weight:650!important;
-  letter-spacing:-.3px!important;line-height:1.35!important;
+  margin:0!important;color:var(--ui-ink)!important;font-size:clamp(20px,2vw,25px)!important;font-weight:650!important;
+  letter-spacing:-.4px!important;line-height:1.35!important;
 }
-body.ui-page-savings .app-content>header .w-10,
-body.ui-page-health .exercise-main>header>div:first-child .w-11,
+body.ui-page-savings .app-content>header p,body.ui-page-health .exercise-main>header>div:first-child p,
+body.ui-page-notes .topbar .eyebrow,body.ui-page-notes .topbar .subhead{
+  margin-top:3px!important;margin-bottom:0!important;color:var(--ui-muted)!important;font-size:11px!important;
+  font-weight:400!important;letter-spacing:0!important;line-height:1.6!important;
+}
+body.ui-page-savings .app-content>header .w-10,body.ui-page-health .exercise-main>header>div:first-child .w-11,
 body.ui-page-notes .topbar .brand-icon{
-  width:32px!important;height:32px!important;flex:0 0 32px!important;
-  border-radius:8px!important;background:transparent!important;
-  color:var(--ui-muted)!important;box-shadow:none!important;
+  width:36px!important;height:36px!important;flex:0 0 36px!important;border-radius:10px!important;
+  background:var(--ui-accent-soft)!important;color:var(--ui-accent-strong)!important;box-shadow:none!important;
 }
 body.ui-page-savings .app-content>header .w-10 img{object-fit:contain!important}
-body.ui-page-savings .app-content>header p,
-body.ui-page-health .exercise-main>header>div:first-child p,
-body.ui-page-notes .topbar .eyebrow,
-body.ui-page-notes .topbar .subhead{
-  margin-top:2px!important;margin-bottom:0!important;
-  font-size:11px!important;font-weight:400!important;
-  letter-spacing:0!important;color:var(--ui-muted)!important;
+body.ui-page-savings .app-content>header a,body.ui-page-savings .app-content>header button,
+body.ui-page-health .exercise-main>header a,body.ui-page-notes .topbar .signout{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;
+  min-height:34px!important;padding:7px 10px!important;border:1px solid var(--ui-line)!important;border-radius:8px!important;
+  background:var(--ui-card)!important;color:#58645c!important;box-shadow:none!important;font-size:11px!important;
+  font-weight:600!important;text-decoration:none!important;white-space:nowrap;
 }
-body.ui-page-savings .app-content>header a,
-body.ui-page-savings .app-content>header button,
-body.ui-page-health .exercise-main>header a,
-body.ui-page-notes .topbar .signout{
-  min-height:32px!important;padding:6px 10px!important;
-  border:1px solid var(--ui-line)!important;border-radius:8px!important;
-  background:transparent!important;box-shadow:none!important;
-  color:#58645c!important;font-size:11px!important;font-weight:600!important;
-}
-body.ui-page-savings .app-content>header a:hover,
-body.ui-page-savings .app-content>header button:hover,
-body.ui-page-health .exercise-main>header a:hover,
-body.ui-page-notes .topbar .signout:hover{background:#fff!important}
+body.ui-page-savings .app-content>header a:hover,body.ui-page-savings .app-content>header button:hover,
+body.ui-page-health .exercise-main>header a:hover,body.ui-page-notes .topbar .signout:hover{background:var(--ui-accent-soft)!important}
+/* Health page's introductory banner becomes a quiet standard card, not a separate visual system. */
 body.ui-page-health .exercise-main>header>div.mt-5.rounded-3xl{
-  max-width:1280px!important;margin:12px auto 0!important;padding:0 0 12px!important;
-  border:0!important;border-bottom:1px solid var(--ui-line)!important;
-  border-radius:0!important;background:transparent!important;
-  color:var(--ui-ink)!important;box-shadow:none!important;
+  width:100%!important;max-width:1280px!important;margin:12px auto 0!important;padding:17px 19px!important;
+  border:1px solid var(--ui-line)!important;border-radius:var(--ui-radius)!important;background:var(--ui-card)!important;
+  color:var(--ui-ink)!important;box-shadow:var(--ui-shadow)!important;
 }
 body.ui-page-health .exercise-main>header>div.mt-5.rounded-3xl p,
-body.ui-page-health .exercise-main>header>div.mt-5.rounded-3xl h1{
-  color:var(--ui-ink)!important;opacity:1!important;
+body.ui-page-health .exercise-main>header>div.mt-5.rounded-3xl h1{color:var(--ui-ink)!important;opacity:1!important}
+body.ui-page-health .exercise-main>header>div.mt-5.rounded-3xl p:first-child{color:var(--ui-muted)!important;font-size:10px!important;letter-spacing:.04em!important}
+body.ui-page-health .exercise-main>header>div.mt-5.rounded-3xl h1{margin-top:3px!important;font-size:20px!important;font-weight:650!important;letter-spacing:-.3px!important}
+body.ui-page-health .exercise-main>header>div.mt-5.rounded-3xl p:last-child{margin-top:4px!important;font-size:12px!important;color:var(--ui-muted)!important}
+/* Content width, card language and form controls */
+body.ui-page-savings .app-content main,body.ui-page-health .exercise-main main,body.ui-page-notes .content,
+body.ui-page-notes .board-wrap{
+  width:100%!important;max-width:1368px!important;margin:0 auto!important;padding:14px clamp(20px,3.5vw,44px) 40px!important;
 }
-body.ui-page-health .exercise-main>header>div.mt-5.rounded-3xl p:first-child{
-  color:var(--ui-muted)!important;font-size:10px!important;letter-spacing:.04em!important;
+body.ui-page-savings .app-content .cream-card,body.ui-page-health .exercise-main .cream-card,
+body.ui-page-notes .composer,body.ui-page-notes .board,body.ui-page-notes .sticky-note{
+  border:1px solid var(--ui-line)!important;border-radius:var(--ui-radius)!important;background:var(--ui-card)!important;
+  box-shadow:var(--ui-shadow)!important;backdrop-filter:none!important;
 }
-body.ui-page-health .exercise-main>header>div.mt-5.rounded-3xl h1{
-  margin-top:3px!important;font-size:20px!important;font-weight:650!important;
-  letter-spacing:-.25px!important;
+body.ui-page-savings .app-content .cream-input,body.ui-page-health .exercise-main .cream-input,
+body.ui-page-notes textarea,body.ui-page-notes input,body.ui-page-notes select,body.ui-page-notes .note-text.editing{
+  max-width:100%;border:1px solid #e6e3da!important;border-radius:var(--ui-radius-sm)!important;background:var(--ui-input)!important;color:var(--ui-ink)!important;
 }
-body.ui-page-health .exercise-main>header>div.mt-5.rounded-3xl p:last-child{
-  margin-top:4px!important;font-size:12px!important;color:var(--ui-muted)!important;
+body.ui-page-savings .app-content .cream-input:focus,body.ui-page-health .exercise-main .cream-input:focus,
+body.ui-page-notes textarea:focus,body.ui-page-notes input:focus,body.ui-page-notes select:focus,
+body.ui-page-notes .note-text.editing:focus{
+  border-color:#a8ad9d!important;box-shadow:0 0 0 3px rgba(105,118,92,.09)!important;outline:none!important;
 }
-body.ui-page-notes .topbar>div:first-child{justify-content:flex-start!important}
+body.ui-page-savings .app-content .rounded-3xl,body.ui-page-health .exercise-main .rounded-3xl{border-radius:var(--ui-radius)!important}
+body.ui-page-savings .app-content .shadow-sm,body.ui-page-savings .app-content .shadow-md,body.ui-page-savings .app-content .shadow-lg,
+body.ui-page-health .exercise-main .shadow-sm,body.ui-page-health .exercise-main .shadow-md,body.ui-page-health .exercise-main .shadow-lg{box-shadow:var(--ui-shadow)!important}
+body.ui-page-savings .app-content button,body.ui-page-health .exercise-main button,body.ui-page-notes .content button{
+  font-family:inherit;transition:background-color .16s ease,border-color .16s ease,color .16s ease;
+}
+body.ui-page-savings .app-content button:focus-visible,body.ui-page-health .exercise-main button:focus-visible,
+body.ui-page-notes button:focus-visible,body.ui-page-savings .exercise-sidebar a:focus-visible,
+body.ui-page-health .exercise-sidebar a:focus-visible,body.ui-page-notes .sidebar a:focus-visible{outline:2px solid var(--ui-accent-line);outline-offset:2px}
 body.ui-page-notes .content{padding-top:14px!important}
-body.ui-page-savings .app-content main,
-body.ui-page-health .exercise-main main{padding-top:14px!important}
-body.ui-page-savings .app-content .cream-card,
-body.ui-page-health .exercise-main .cream-card,
-body.ui-page-notes .composer,
-body.ui-page-notes .board{border-radius:10px!important;box-shadow:none!important}
-body.ui-page-savings .app-content .cream-input,
-body.ui-page-health .exercise-main .cream-input,
-body.ui-page-notes .composer textarea,
-body.ui-page-notes .note-text.editing{border-radius:8px!important}
-body.ui-page-savings .app-content .rounded-3xl,
-body.ui-page-health .exercise-main .rounded-3xl{border-radius:10px!important}
-@media(max-width:760px){
-  body.ui-page-savings .app-content>header,
-  body.ui-page-health .exercise-main>header,
-  body.ui-page-notes .topbar{padding:14px 14px 8px!important}
-  body.ui-page-savings .app-content>header h1,
-  body.ui-page-health .exercise-main>header h1,
-  body.ui-page-notes .topbar h1{font-size:18px!important}
-  body.ui-page-health .exercise-main>header>div.mt-5.rounded-3xl{margin-top:8px!important;padding-bottom:10px!important}
-  body.ui-page-health .exercise-main>header>div.mt-5.rounded-3xl h1{font-size:18px!important}
+body.ui-page-notes .composer{max-width:none;margin:0 0 22px;overflow:hidden}
+body.ui-page-notes .composer textarea{border:0!important;border-radius:0!important;background:transparent!important}
+body.ui-page-notes .save-btn{background:var(--ui-accent-soft)!important;color:var(--ui-accent-strong)!important}
+body.ui-page-notes .save-btn:hover{background:var(--ui-accent-line)!important}
+body.ui-page-notes .board{background-image:none!important}
+body.ui-page-notes .board-title,body.ui-page-notes .board-title span,body.ui-page-notes .eyebrow{color:var(--ui-accent-strong)!important}
+/* Savings sign-in remains intact, but follows the same restrained palette. */
+body.ui-page-savings .auth-screen{background:var(--ui-page)!important}
+body.ui-page-savings .auth-orb,body.ui-page-savings .auth-spark,body.ui-page-savings .auth-coin,
+body.ui-page-savings .auth-floating-note,body.ui-page-savings .auth-hero-art{display:none!important}
+body.ui-page-savings .auth-layout{min-height:0;border:1px solid var(--ui-line);border-radius:16px;background:var(--ui-card);box-shadow:none;backdrop-filter:none}
+body.ui-page-savings .auth-welcome{background:#f0f1eb}
+body.ui-page-savings .auth-form-side{background:var(--ui-card)}
+body.ui-page-savings .auth-submit{background:var(--ui-accent-strong);border-radius:9px;box-shadow:none}
+body.ui-page-savings .auth-input-wrap{border-radius:9px}
+/* Responsive shell: same order and spacing on tablet/mobile. */
+@media(max-width:900px){
+  body.ui-page-savings .app-layout,body.ui-page-health .app-layout,body.ui-page-notes .app-layout{grid-template-columns:minmax(0,1fr)!important}
+  body.ui-page-savings .exercise-sidebar,body.ui-page-health .exercise-sidebar,body.ui-page-notes .sidebar{
+    position:sticky!important;top:0!important;z-index:40!important;width:100%!important;height:auto!important;min-height:0!important;
+    padding:8px 12px!important;display:flex!important;flex-direction:row!important;align-items:center!important;gap:5px!important;
+    overflow-x:auto!important;overflow-y:hidden!important;white-space:nowrap;border-right:0!important;border-bottom:1px solid var(--ui-line)!important;
+  }
+  body.ui-page-savings .exercise-sidebar .side-brand,body.ui-page-health .exercise-sidebar .side-brand,
+  body.ui-page-notes .sidebar .brand,body.ui-page-savings .exercise-sidebar>div:not(.side-brand),
+  body.ui-page-health .exercise-sidebar>div:not(.side-brand),body.ui-page-savings .exercise-sidebar>p,
+  body.ui-page-health .exercise-sidebar>p,body.ui-page-notes .sidebar .side-label,body.ui-page-notes .sidebar .side-copy{display:none!important}
+  body.ui-page-savings .exercise-sidebar>a:not(.side-brand),body.ui-page-health .exercise-sidebar>a:not(.side-brand),
+  body.ui-page-notes .sidebar .nav-link{flex:0 0 auto!important;min-height:36px!important;padding:8px 11px!important;font-size:12px!important}
+  body.ui-page-savings .app-content>header,body.ui-page-health .exercise-main>header,body.ui-page-notes .topbar{padding:18px 18px 10px!important}
+  body.ui-page-savings .app-content main,body.ui-page-health .exercise-main main,body.ui-page-notes .content,
+  body.ui-page-notes .board-wrap{padding:12px 18px 28px!important}
 }
-
-/* Premium quiet-luxury v3: shared across savings, health, notes and mobile */
-:root{--ui-ink:#252923;--ui-muted:#777b72;--ui-line:#e8e5dc;--ui-surface:#fffefa;--ui-surface-soft:#f7f5ef;--ui-radius:16px;--ui-radius-sm:10px;--ui-shadow:0 8px 24px rgba(37,41,35,.045);--ui-accent:#69765c;--ui-accent-strong:#4f5d43;--ui-accent-soft:#f0f2eb;--ui-accent-line:#dce2d3}
-body.ui-page-health{--ui-accent:#7c7768;--ui-accent-strong:#5f5a4d;--ui-accent-soft:#f2f0eb;--ui-accent-line:#e1ddd3}
-body.ui-page-notes{--ui-accent:#9b8961;--ui-accent-strong:#776744;--ui-accent-soft:#f5f1e7;--ui-accent-line:#e8dfc9}
-body.ui-page-savings,body.ui-page-health,body.ui-page-notes{background:#f7f6f2!important;background-image:none!important;color:var(--ui-ink)!important;font-family:"Sarabun","Plus Jakarta Sans",sans-serif}
-body.ui-page-savings .app-layout,body.ui-page-health .app-layout,body.ui-page-notes .app-layout{grid-template-columns:224px minmax(0,1fr)}
-body.ui-page-savings .exercise-sidebar,body.ui-page-health .exercise-sidebar,body.ui-page-notes .sidebar{background:#fbfaf6!important;border-right:1px solid var(--ui-line)!important;padding:25px 15px!important;backdrop-filter:none!important}
-body.ui-page-savings .exercise-sidebar>a:not(.side-brand),body.ui-page-health .exercise-sidebar>a:not(.side-brand),body.ui-page-notes .sidebar .nav-link{min-height:42px!important;padding:10px 12px!important;border-radius:9px!important;font-weight:600!important;color:#6e7169!important;background:transparent!important}
-body.ui-page-savings .exercise-sidebar>a.active,body.ui-page-health .exercise-sidebar>a.active,body.ui-page-notes .sidebar .nav-link.active{background:var(--ui-accent-soft)!important;color:var(--ui-accent-strong)!important}
-body.ui-page-savings .app-content>header,body.ui-page-health .exercise-main>header,body.ui-page-notes .topbar{position:relative!important;top:auto!important;background:transparent!important;backdrop-filter:none!important;border:0!important;box-shadow:none!important;padding:29px clamp(20px,4vw,54px) 15px!important}
-body.ui-page-savings .app-content>header h1,body.ui-page-health .exercise-main>header h1,body.ui-page-notes .topbar h1{font-size:clamp(21px,2vw,27px)!important;font-weight:600!important;letter-spacing:-.55px!important;color:#252923!important}
-body.ui-page-savings .app-content main,body.ui-page-health .exercise-main main,body.ui-page-notes .content,body.ui-page-notes .board-wrap{padding:10px clamp(20px,4vw,54px) 42px!important}
-body.ui-page-savings .cream-card,body.ui-page-health .cream-card,body.ui-page-notes .composer,body.ui-page-notes .sticky-note{background:#fffefa!important;border:1px solid var(--ui-line)!important;border-radius:14px!important;box-shadow:0 3px 14px rgba(37,41,35,.025)!important;backdrop-filter:none!important}
-body.ui-page-savings .cream-input,body.ui-page-health .cream-input,body.ui-page-notes textarea,body.ui-page-notes input,body.ui-page-notes select{background:#fbfaf6!important;border:1px solid #e6e3da!important;border-radius:9px!important;color:#292d26!important}
-body.ui-page-savings .cream-input:focus,body.ui-page-health .cream-input:focus,body.ui-page-notes textarea:focus,body.ui-page-notes input:focus,body.ui-page-notes select:focus{border-color:#a8ad9d!important;box-shadow:0 0 0 3px rgba(105,118,92,.09)!important;outline:none!important}
-body.ui-page-savings .rounded-3xl,body.ui-page-health .rounded-3xl{border-radius:14px!important}
-body.ui-page-health .exercise-main>header>div.mt-5.rounded-3xl{background:#efeee8!important;border:1px solid #e5e2d8!important;border-radius:14px!important;box-shadow:none!important}
-body.ui-page-health .exercise-main>header>div.mt-5.rounded-3xl h1{font-size:21px!important;font-weight:600!important}
-body.ui-page-notes .sidebar .brand-icon{background:#f0eee7!important;color:#756b54!important;border-radius:10px!important}
-@media(max-width:900px){body.ui-page-savings .app-layout,body.ui-page-health .app-layout,body.ui-page-notes .app-layout{grid-template-columns:1fr}body.ui-page-savings .exercise-sidebar,body.ui-page-health .exercise-sidebar,body.ui-page-notes .sidebar{position:relative!important;width:100%!important;height:auto!important;min-height:0!important;padding:10px 14px!important;border-right:0!important;border-bottom:1px solid var(--ui-line)!important}body.ui-page-savings .app-content>header,body.ui-page-health .exercise-main>header,body.ui-page-notes .topbar{padding:18px!important}body.ui-page-savings .app-content main,body.ui-page-health .exercise-main main,body.ui-page-notes .content,body.ui-page-notes .board-wrap{padding:8px 16px 30px!important}}
-@media(max-width:600px){body.ui-page-savings .app-content>header h1,body.ui-page-health .exercise-main>header h1,body.ui-page-notes .topbar h1{font-size:20px!important}}
+@media(max-width:600px){
+  body.ui-page-savings .app-content>header,body.ui-page-health .exercise-main>header,body.ui-page-notes .topbar{padding:15px 14px 8px!important}
+  body.ui-page-savings .app-content>header h1,body.ui-page-health .exercise-main>header h1,body.ui-page-notes .topbar h1{font-size:19px!important}
+  body.ui-page-savings .app-content>header p,body.ui-page-health .exercise-main>header p,body.ui-page-notes .topbar .eyebrow,body.ui-page-notes .topbar .subhead{font-size:10px!important}
+  body.ui-page-savings .app-content>header a,body.ui-page-savings .app-content>header button,
+  body.ui-page-health .exercise-main>header a,body.ui-page-notes .topbar .signout{min-height:32px!important;padding:6px 8px!important;font-size:10px!important}
+  body.ui-page-health .exercise-main>header>div.mt-5.rounded-3xl{margin-top:9px!important;padding:13px!important}
+  body.ui-page-health .exercise-main>header>div.mt-5.rounded-3xl h1{font-size:18px!important}
+  body.ui-page-savings .app-content main,body.ui-page-health .exercise-main main,body.ui-page-notes .content,
+  body.ui-page-notes .board-wrap{padding:10px 12px 24px!important}
+  body.ui-page-savings .auth-layout{border-radius:14px}
+}
+@media(prefers-reduced-motion:reduce){body.ui-page-savings *,body.ui-page-health *,body.ui-page-notes *{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}
