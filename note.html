@@ -113,12 +113,14 @@ body{background-color:#f7f8f4;background-image:radial-gradient(#dce8dd .7px,tran
     <p class="side-copy">เข้าถึงการออมเงิน สุขภาพ และโน๊ตได้จากเมนูเดียวกัน</p>
   </aside>
   <main class="main">
-    <header class="topbar">
-      <div style="display:flex;align-items:center;gap:13px;min-width:0">
-        <span class="brand-icon" aria-hidden="true" style="width:46px;height:46px;flex-shrink:0;border-radius:15px;box-shadow:0 5px 14px #a8831218"><i class="fa-regular fa-note-sticky"></i></span>
-        <div style="min-width:0"><p class="eyebrow">NOTE SPACE · พื้นที่จดบันทึกส่วนตัว</p><h1>โน๊ต</h1><p class="subhead">เขียนไว้ก่อน เดี๋ยวค่อยจัดการทีหลัง</p></div>
+    <header class="topbar ui-topbar">
+      <div class="ui-topbar-inner">
+        <div class="ui-topbar-brand">
+          <span class="brand-icon" aria-hidden="true"><i class="fa-regular fa-note-sticky"></i></span>
+          <div class="ui-topbar-copy"><h1>โน๊ต</h1><p class="subhead">เขียนไว้ก่อน เดี๋ยวค่อยจัดการทีหลัง</p></div>
+        </div>
+        <button class="signout" id="signoutBtn" type="button"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>ออกจากระบบ</span></button>
       </div>
-      <button class="signout" id="signoutBtn" type="button"><i class="fa-solid fa-arrow-right-from-bracket"></i> ออกจากระบบ</button>
     </header>
     <div class="content">
       <form id="composer" class="composer">
