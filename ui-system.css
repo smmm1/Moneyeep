@@ -1389,3 +1389,39 @@ body.ui-page-notes .notes-toolbar select { max-width: 220px; }
   body.ui-page-notes .ui-header-primary,
   body.ui-page-health .ui-header-primary { padding: 9px 12px !important; }
 }
+
+
+/* Portal uses the same token system while retaining the colored card headers. */
+body.ui-page-landing { background: var(--payd-page) !important; color: var(--payd-body) !important; }
+body.ui-page-landing .shell { max-width: 1120px !important; }
+body.ui-page-landing .app-card {
+  overflow: hidden !important; background: #fff !important;
+  border: 1px solid var(--payd-border) !important; border-radius: 18px !important;
+  box-shadow: var(--payd-shadow) !important; transition: transform .2s ease, box-shadow .2s ease !important;
+}
+body.ui-page-landing .app-card:hover {
+  transform: translateY(-3px) !important; box-shadow: 0 10px 30px rgb(0 0 0 / .06) !important;
+}
+body.ui-page-landing .app-card .card-head { border: 0 !important; border-radius: 0 !important; padding: 22px 24px !important; }
+body.ui-page-landing .app-card .card-body { background: #fff !important; padding: 22px 24px 24px !important; }
+body.ui-page-landing .app-card .card-body h3 { color: var(--payd-ink) !important; }
+body.ui-page-landing .app-card .card-body p { color: var(--payd-muted) !important; }
+body.ui-page-landing .login-trigger,
+body.ui-page-landing .auth-submit {
+  background: var(--payd-primary) !important; border-color: var(--payd-primary) !important;
+  color: #fff !important; border-radius: 12px !important;
+}
+body.ui-page-landing .login-trigger:hover,
+body.ui-page-landing .auth-submit:hover { background: var(--payd-primary-hover) !important; }
+body.ui-page-landing .auth-modal {
+  background: #fff !important; border: 1px solid var(--payd-border) !important;
+  border-radius: 24px !important; box-shadow: 0 18px 60px rgb(0 0 0 / .12) !important;
+}
+body.ui-page-landing .auth-field input {
+  background: var(--payd-page) !important; border: 1px solid var(--payd-border) !important;
+  border-radius: 12px !important;
+}
+body.ui-page-landing .auth-field input:focus {
+  outline: none !important; border-color: var(--payd-primary) !important;
+  box-shadow: 0 0 0 3px rgb(15 81 50 / .12) !important;
+}
