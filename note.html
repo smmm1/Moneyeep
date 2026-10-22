@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#fffbed">
-  <title>โน้ต — NOTE SPACE</title>
+  <title>โน้ต | พื้นที่ของฉัน</title>
   <link rel="icon" type="image/svg+xml" href="/note-icon.svg">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="this.onerror=null;this.src=&quot;https://unpkg.com/@supabase/supabase-js@2&quot;"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -104,22 +104,61 @@ body{background-color:#f7f8f4;background-image:radial-gradient(#dce8dd .7px,tran
     .notes-toolbar input:focus,.notes-toolbar select:focus{outline:3px solid rgba(105,118,92,.12);border-color:#a8ad9d}
     .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
     @media(max-width:760px){.notes-toolbar{gap:7px}.notes-toolbar input,.notes-toolbar select{font-size:12px;min-width:0}.notes-toolbar select{max-width:45%}}
-  </style>
+  
+/* Rebuilt shared shell: keep page-specific content, unify navigation/header with savings */
+:root{--ui-accent:#0f5132;--ui-accent-soft:#edf6ef;--ui-accent-line:#d6e7d8;--ui-ink:#202923;--ui-muted:#7b837e;--ui-border:#e7ece6;--sidebar:236px}
+body{background:#f7f8f4!important;background-image:none!important;color:#202923!important;font-family:"IBM Plex Sans Thai","Sarabun","Plus Jakarta Sans",sans-serif!important}
+.app-layout{display:grid!important;grid-template-columns:236px minmax(0,1fr)!important;gap:0!important;min-height:100vh}
+.exercise-sidebar,.sidebar.exercise-sidebar{position:sticky!important;top:0!important;height:100vh!important;min-width:0;padding:24px 16px!important;background:#fff!important;border-right:1px solid #e7ece6!important;backdrop-filter:none!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:7px!important;overflow:visible!important;z-index:45}
+.exercise-sidebar .side-brand{display:flex!important;align-items:center!important;gap:11px!important;margin:0 0 18px!important;padding:8px 9px 20px!important;border-bottom:1px solid #f0f2f0}
+.exercise-sidebar a:not(.side-brand){display:flex!important;align-items:center!important;gap:11px!important;margin:0!important;padding:12px 13px!important;border-radius:12px!important;text-decoration:none!important;font-size:13px!important;font-weight:600!important;color:#68736b!important;background:transparent!important}
+.exercise-sidebar a:not(.side-brand):hover{background:#f6f9f6!important;color:#2e7754!important}
+.exercise-sidebar a.active{background:#edf6ef!important;color:#2e7754!important}
+.exercise-sidebar .side-label{margin:24px 12px 0!important;font-size:10px!important;font-weight:700!important;letter-spacing:1.4px!important;color:#9aa49c!important}
+.exercise-sidebar .side-copy{margin:2px 12px!important;font-size:12px!important;line-height:1.8!important;color:#8a938c!important}
+.exercise-main,.app-content,.main{min-width:0!important;overflow:visible!important}
+.ui-topbar,.topbar{position:sticky!important;top:0!important;z-index:40!important;padding:13px clamp(18px,3vw,36px)!important;background:rgba(255,255,255,.94)!important;border:0!important;border-bottom:1px solid #e7ece6!important;box-shadow:0 4px 18px rgba(39,53,47,.035)!important;backdrop-filter:blur(12px)!important}
+.ui-topbar-inner{width:100%!important;max-width:1400px!important;margin:0 auto!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:16px!important}
+.ui-topbar-brand{display:flex!important;align-items:center!important;gap:11px!important;min-width:0}
+.ui-topbar-brand .ui-topbar-icon,.ui-topbar-brand .brand-icon{display:grid!important;place-items:center!important;width:40px!important;height:40px!important;flex:0 0 40px!important;border-radius:12px!important;background:#edf6ef!important;color:#2e7754!important;box-shadow:none!important}
+.ui-topbar-copy h1,.topbar h1{margin:0!important;color:#202923!important;font-size:18px!important;font-weight:700!important;letter-spacing:-.35px!important;line-height:1.3!important}
+.ui-topbar-copy p,.topbar .subhead{margin:3px 0 0!important;color:#7b837e!important;font-size:11px!important;line-height:1.5!important}
+.ui-header-primary{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;min-height:40px!important;padding:9px 14px!important;border:1px solid #2e7754!important;border-radius:10px!important;background:#2e7754!important;color:white!important;font-size:12px!important;font-weight:600!important;white-space:nowrap!important}
+.ui-header-primary:hover{background:#245f43!important}
+.ui-topbar-action,.signout{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;min-height:40px!important;padding:9px 12px!important;border:1px solid #e3e8e3!important;border-radius:10px!important;background:#fff!important;color:#526057!important;font-size:12px!important;font-weight:600!important;white-space:nowrap!important}
+.app-content>main,.content{max-width:1400px!important;margin:0 auto!important;padding:24px clamp(18px,3vw,36px)!important}
+.cream-card,.composer{border-color:#e7ece6!important;box-shadow:0 6px 22px rgba(28,45,32,.045)!important}
+button,input,select,textarea{font-family:inherit}
+@media(max-width:760px){
+ .app-layout{display:block!important;grid-template-columns:minmax(0,1fr)!important}
+ .exercise-sidebar,.sidebar.exercise-sidebar{position:sticky!important;top:0!important;height:auto!important;padding:8px 10px!important;border-right:0!important;border-bottom:1px solid #e7ece6!important;display:flex!important;flex-direction:row!important;align-items:center!important;gap:6px!important;overflow-x:auto!important;white-space:nowrap!important;background:rgba(255,255,255,.97)!important}
+ .exercise-sidebar .side-brand{display:none!important}
+ .exercise-sidebar a:not(.side-brand){flex-shrink:0!important;padding:10px 12px!important;font-size:12px!important}
+ .exercise-sidebar .side-label,.exercise-sidebar .side-copy{display:none!important}
+ .ui-topbar,.topbar{position:relative!important;padding:14px 16px!important}
+ .ui-topbar-inner{gap:8px!important;flex-wrap:wrap!important}
+ .ui-topbar-copy h1,.topbar h1{font-size:16px!important}
+ .ui-topbar-brand .ui-topbar-icon,.ui-topbar-brand .brand-icon{width:36px!important;height:36px!important;flex-basis:36px!important}
+ .ui-header-primary,.ui-topbar-action,.signout{min-height:36px!important;padding:8px 10px!important;font-size:11px!important}
+ .app-content>main,.content{padding:16px!important}
+}
+
+</style>
 
   <link rel="stylesheet" href="/ui-system.css">
   <script src="/ui-system.js" defer></script>
 </head>
 <body class="ui-page-notes">
 <div class="app-layout">
-  <aside class="sidebar">
-    <a class="brand" href="/moneyyeep.html" aria-label="หน้าออมเงิน"><span class="brand-icon"><i class="fa-solid fa-layer-group"></i></span><span><b>พื้นที่ของฉัน</b><small>PERSONAL WORKSPACE</small></span></a>
-    <a class="nav-link" href="/moneyyeep.html"><i class="fa-solid fa-wallet"></i> ออมเงิน</a>
-    <a class="nav-link" href="/excie.html"><i class="fa-solid fa-dumbbell"></i> สุขภาพ &amp; ออกกำลังกาย</a>
-    <a class="nav-link active" href="/note.html" aria-current="page"><i class="fa-regular fa-note-sticky"></i> โน้ต</a>
-    <div class="side-label">พื้นที่ของฉัน</div>
-    <p class="side-copy">เข้าถึงการออมเงิน สุขภาพ และโน้ตได้จากเมนูเดียวกัน</p>
-  </aside>
-  <main class="main">
+  <aside class="sidebar exercise-sidebar">
+  <a href="/moneyyeep.html" class="side-brand" aria-label="หน้าออมเงิน"><span class="grid place-items-center w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-700"><i class="fa-solid fa-piggy-bank"></i></span><span><b class="block text-base text-gray-800">ออมตัง</b><small class="text-[10px] text-gray-400">PERSONAL WORKSPACE</small></span></a>
+  <a href="/moneyyeep.html"><i class="fa-solid fa-wallet w-5 text-center"></i> ออมเงิน</a>
+  <a href="/ออกกำลังกาย.html"><i class="fa-solid fa-dumbbell w-5 text-center"></i> สุขภาพ &amp; ออกกำลังกาย</a>
+  <a href="/note.html" class="active" aria-current="page"><i class="fa-regular fa-note-sticky w-5 text-center"></i> โน้ต</a>
+  <div class="side-label">พื้นที่ของฉัน</div>
+  <p class="side-copy">เข้าถึงการออมเงิน สุขภาพ และโน้ตได้จากเมนูเดียวกัน</p>
+</aside>
+  <main class="main app-content">
     <header class="topbar ui-topbar">
       <div class="ui-topbar-inner">
         <div class="ui-topbar-brand">
