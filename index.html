@@ -21,6 +21,13 @@
 .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.app-card{display:block;text-decoration:none;color:inherit;background:#fff;border:1px solid var(--line);border-radius:17px;overflow:hidden;min-height:220px;transition:border-color .2s,transform .2s,box-shadow .2s}.app-card:hover{transform:translateY(-3px);border-color:#d5dcd6;box-shadow:0 12px 28px #17251b0a}.card-head{height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 20px}.card-head .label{font-size:12px;font-weight:600;letter-spacing:.2px}.card-head .symbol{font-size:17px}.finance .card-head{background:var(--green-bg);color:var(--green)}.notes .card-head{background:var(--amber-bg);color:var(--amber)}.health .card-head{background:var(--blue-bg);color:var(--blue)}.card-body{padding:21px 20px 18px;display:flex;flex-direction:column;min-height:160px}.card-body h3{font-size:19px;letter-spacing:-.25px;margin:0;font-weight:600}.card-body p{font-size:13px;color:var(--muted);line-height:1.7;margin:8px 0 22px}.card-foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;color:#9aa19c;font-size:12px}.card-foot i{font-size:12px;color:#7b857e;transition:transform .2s}.app-card:hover .card-foot i{transform:translateX(3px)}.future{border:1px dashed #dfe4df;background:#fdfefd}.future .card-head{background:#f7f8f7;color:#7e8981}.future .card-body h3{color:#68716b}.future .card-foot{color:#9aa19c}.footer{display:flex;justify-content:space-between;gap:12px;border-top:1px solid #f0f2f0;margin-top:58px;padding-top:18px;color:#a0a6a1;font-size:11px}
 @media(max-width:760px){.shell{width:min(100% - 36px,520px);padding-top:27px}.top{margin-bottom:48px}.section{margin-top:38px}.grid{grid-template-columns:1fr;gap:12px}.app-card{min-height:0}.card-head{height:52px;padding:0 17px}.card-body{min-height:130px;padding:17px}.card-body p{margin-bottom:15px}.footer{margin-top:40px;flex-direction:column}.intro p:last-child{font-size:14px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;scroll-behavior:auto!important}}
+
+/* Minimal landing header — no oversized top bar */
+.shell{width:min(100% - 40px,1080px);padding:28px 0 36px}
+.top{margin-bottom:52px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.brandmark{width:32px;height:32px;border-radius:9px;background:transparent}
+.login-trigger{padding:8px 12px;border-radius:9px;background:transparent;box-shadow:none}
+@media(max-width:600px){.shell{width:calc(100% - 28px);padding-top:18px}.top{margin-bottom:34px}.login-trigger{padding:8px 10px}}
 </style>
 </head>
 <body>
