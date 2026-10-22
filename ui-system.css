@@ -76,7 +76,7 @@ body.ui-page-notes .topbar>div:first-child{
   width:100%!important;max-width:1280px!important;min-height:0!important;margin:0 auto!important;
   display:flex!important;align-items:center!important;justify-content:space-between!important;gap:14px!important;
 }
-body.ui-page-savings .app-content>header h1,body.ui-page-health .exercise-main>header>div:first-child p:not(.text-\[10px\]),
+body.ui-page-savings .app-content>header h1,body.ui-page-health .exercise-main>header>div:first-child p:nth-child(2),
 body.ui-page-notes .topbar h1{
   margin:0!important;color:var(--ui-ink)!important;font-size:clamp(20px,2vw,25px)!important;font-weight:650!important;
   letter-spacing:-.4px!important;line-height:1.35!important;
