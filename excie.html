@@ -191,7 +191,7 @@ body{background-color:#f7f8f4;background-image:radial-gradient(#dce8dd .7px,tran
         <p class="ui-topbar-subtitle">บันทึกกิจกรรมและติดตามพัฒนาการ</p>
       </div>
     </div>
-    <a href="/" class="ui-topbar-action"><i class="fa-solid fa-wallet"></i><span>หน้าออมเงิน</span></a>
+    <button type="button" id="healthSignoutBtn" class="ui-topbar-action"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>ออกจากระบบ</span></button>
   </div>
   <div class="mt-5 rounded-3xl p-5 md:p-7 text-white shadow-lg" style="background:linear-gradient(120deg,#be123c,#fb7185)">
     <p class="text-xs font-bold opacity-80">สุขภาพและการออกกำลังกาย · HEALTH TRACKER</p>
@@ -343,6 +343,7 @@ async function bootExcelsior(){
   document.getElementById('exerciseContent').classList.remove('hidden');
 }
 db.auth.onAuthStateChange((_event,session)=>{if(session?.user){currentUser=session.user;}});
+document.getElementById('healthSignoutBtn')?.addEventListener('click',async()=>{const button=document.getElementById('healthSignoutBtn');button.disabled=true;const {error}=await db.auth.signOut();if(error){button.disabled=false;alert('ออกจากระบบไม่สำเร็จ: '+error.message);return;}location.assign('/');});
 bootExcelsior();
 </script>
 </body>
