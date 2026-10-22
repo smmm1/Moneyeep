@@ -52,7 +52,17 @@ function redesign(){
     if(layout)layout.classList.add('redesign-app-layout');
     if(main)main.classList.add('redesign-health-main');
     var pageContent=main&&main.querySelector(':scope > main.exercise-shell');if(pageContent)pageContent.classList.add('redesign-page-content');
-    if(header){header.classList.add('redesign-health-header');var banner=header.querySelector(':scope > div.mt-5');if(banner)banner.classList.add('redesign-health-hero');}
+    if(header){
+      header.classList.add('redesign-health-header');
+      var healthTopbar=header.querySelector(':scope > .ui-topbar-inner');
+      if(healthTopbar){
+        var healthTopbarShell=document.createElement('div');
+        healthTopbarShell.className='ui-health-topbar-shell';
+        header.parentNode.insertBefore(healthTopbarShell,header);
+        healthTopbarShell.appendChild(healthTopbar);
+      }
+      var banner=header.querySelector(':scope > div.mt-5');if(banner)banner.classList.add('redesign-health-hero');
+    }
     if(content){content.classList.add('redesign-health-grid');var profile=content.querySelector(':scope > .exercise-wide');if(profile)profile.classList.add('redesign-profile-panel');}
     var obsoleteHeading=main&&main.querySelector(':scope > .redesign-page-heading');if(obsoleteHeading)obsoleteHeading.remove();
   }
