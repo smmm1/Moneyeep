@@ -1213,3 +1213,215 @@ body.ui-page-health .exercise-main > header.ui-health-header > .redesign-health-
     margin: 14px 16px 0 !important;
   }
 }
+
+
+/* Payd-inspired shared design tokens — Moneyeep pages */
+:root {
+  --payd-page: #FDFBF7;
+  --payd-surface: #FFFFFF;
+  --payd-border: #EFECE6;
+  --payd-ink: #1A1A1A;
+  --payd-body: #4A4A4A;
+  --payd-muted: #666666;
+  --payd-primary: #0F5132;
+  --payd-primary-hover: #146c43;
+  --payd-shadow: 0 4px 20px rgb(0 0 0 / 0.03);
+  --payd-radius: 16px;
+}
+body.ui-page-savings,
+body.ui-page-notes,
+body.ui-page-health { background: var(--payd-page) !important; color: var(--payd-body); }
+body.ui-page-savings .exercise-sidebar,
+body.ui-page-health .exercise-sidebar,
+body.ui-page-notes .sidebar {
+  background: var(--payd-surface) !important;
+  border-right: 1px solid var(--payd-border) !important;
+  box-shadow: none !important;
+}
+body.ui-page-savings .exercise-sidebar > a:not(.side-brand),
+body.ui-page-health .exercise-sidebar > a:not(.side-brand),
+body.ui-page-notes .sidebar .nav-link {
+  display: flex !important; align-items: center !important; gap: 11px !important;
+  min-height: 46px !important; padding: 12px !important; margin: 4px 0 0 !important;
+  border-radius: 12px !important; color: var(--payd-muted) !important;
+  font-size: 13px !important; font-weight: 600 !important; text-decoration: none !important;
+  transition: background .18s ease, color .18s ease, transform .18s ease !important;
+}
+body.ui-page-savings .exercise-sidebar > a:not(.side-brand):hover,
+body.ui-page-health .exercise-sidebar > a:not(.side-brand):hover,
+body.ui-page-notes .sidebar .nav-link:hover {
+  background: var(--payd-page) !important; color: var(--payd-primary) !important;
+}
+body.ui-page-savings .exercise-sidebar > a.active,
+body.ui-page-health .exercise-sidebar > a.active,
+body.ui-page-notes .sidebar .nav-link.active {
+  background: rgb(15 81 50 / .10) !important; color: var(--payd-primary) !important;
+  box-shadow: inset 3px 0 0 var(--payd-primary) !important;
+}
+body.ui-page-savings .exercise-sidebar .side-brand,
+body.ui-page-health .exercise-sidebar .side-brand,
+body.ui-page-notes .sidebar .brand { margin-bottom: 22px !important; }
+body.ui-page-savings .ui-topbar,
+body.ui-page-notes .topbar,
+body.ui-page-health .ui-health-header {
+  position: relative !important; top: auto !important; z-index: 5 !important;
+  padding: 30px 30px 0 !important; margin: 0 auto !important;
+  background: transparent !important; border: 0 !important; box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+body.ui-page-savings .ui-topbar-inner,
+body.ui-page-notes .topbar .ui-topbar-inner,
+body.ui-page-health .ui-health-header .ui-topbar-inner {
+  display: flex !important; align-items: flex-start !important; justify-content: space-between !important;
+  gap: 18px !important; max-width: 1152px !important; margin: 0 auto !important;
+}
+body.ui-page-savings .ui-topbar-brand,
+body.ui-page-notes .ui-topbar-brand,
+body.ui-page-health .ui-topbar-brand { align-items: flex-start !important; gap: 14px !important; }
+body.ui-page-savings .ui-topbar-copy::before,
+body.ui-page-notes .ui-topbar-copy::before,
+body.ui-page-health .ui-topbar-copy::before {
+  display: block; margin: 0 0 5px; color: var(--payd-primary);
+  font-size: 11px; line-height: 1.4; font-weight: 700; letter-spacing: .12em;
+}
+body.ui-page-savings .ui-topbar-copy::before { content: "FINANCE / OVERVIEW"; }
+body.ui-page-notes .ui-topbar-copy::before { content: "NOTES / OVERVIEW"; }
+body.ui-page-health .ui-topbar-copy::before { content: "HEALTH / OVERVIEW"; }
+body.ui-page-savings .ui-topbar-copy h1,
+body.ui-page-notes .ui-topbar-copy h1,
+body.ui-page-health .ui-topbar-copy h1 {
+  margin: 0 !important; color: var(--payd-ink) !important;
+  font-size: clamp(24px, 2.2vw, 30px) !important; line-height: 1.25 !important; font-weight: 750 !important;
+  letter-spacing: -.025em !important;
+}
+body.ui-page-savings .ui-topbar-copy p,
+body.ui-page-notes .ui-topbar-copy p,
+body.ui-page-health .ui-topbar-copy p {
+  margin-top: 7px !important; color: var(--payd-muted) !important; font-size: 14px !important; line-height: 1.6 !important;
+  font-weight: 400 !important; text-transform: none !important; letter-spacing: 0 !important;
+}
+body.ui-page-savings .ui-topbar .ui-header-primary,
+body.ui-page-notes .ui-topbar .ui-header-primary,
+body.ui-page-health .ui-health-header .ui-header-primary {
+  display: inline-flex !important; align-items: center !important; justify-content: center !important;
+  gap: 8px !important; min-height: 42px !important; padding: 10px 18px !important;
+  border: 0 !important; border-radius: 12px !important; background: var(--payd-primary) !important;
+  color: white !important; font-size: 13px !important; font-weight: 650 !important;
+  box-shadow: 0 2px 8px rgb(15 81 50 / .10) !important; transition: background .18s ease, transform .18s ease !important;
+}
+body.ui-page-savings .ui-topbar .ui-header-primary:hover,
+body.ui-page-notes .ui-topbar .ui-header-primary:hover,
+body.ui-page-health .ui-health-header .ui-header-primary:hover {
+  background: var(--payd-primary-hover) !important; transform: translateY(-1px);
+}
+body.ui-page-savings .ui-topbar .flex.gap-2 { flex-wrap: wrap; justify-content: flex-end; }
+body.ui-page-savings .ui-topbar .flex.gap-2 > button:not(.ui-header-primary),
+body.ui-page-notes .topbar .signout,
+body.ui-page-health .ui-health-header .ui-topbar-action {
+  min-height: 38px !important; border-radius: 11px !important;
+}
+body.ui-page-savings .app-content > main,
+body.ui-page-notes .content,
+body.ui-page-health .exercise-main > main {
+  max-width: 1216px !important; margin: 0 auto !important; padding: 24px 30px 48px !important;
+}
+body.ui-page-savings .cream-card,
+body.ui-page-notes .composer,
+body.ui-page-notes .board,
+body.ui-page-health .cream-card,
+body.ui-page-health .exercise-card {
+  border: 1px solid var(--payd-border) !important; border-radius: 18px !important;
+  box-shadow: var(--payd-shadow) !important;
+}
+body.ui-page-savings .cream-card,
+body.ui-page-health .cream-card { background: #fff !important; }
+body.ui-page-savings input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+body.ui-page-savings select,
+body.ui-page-savings textarea,
+body.ui-page-health input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+body.ui-page-health select,
+body.ui-page-health textarea,
+body.ui-page-notes .notes-toolbar input,
+body.ui-page-notes .notes-toolbar select,
+body.ui-page-notes .composer textarea {
+  background: var(--payd-page) !important; border: 1px solid var(--payd-border) !important;
+  border-radius: 12px !important; padding: 10px 14px !important; color: var(--payd-body) !important;
+  font-size: 14px !important; box-shadow: none !important;
+}
+body.ui-page-savings input:focus,
+body.ui-page-savings select:focus,
+body.ui-page-savings textarea:focus,
+body.ui-page-health input:focus,
+body.ui-page-health select:focus,
+body.ui-page-health textarea:focus,
+body.ui-page-notes .notes-toolbar input:focus,
+body.ui-page-notes .notes-toolbar select:focus,
+body.ui-page-notes .composer textarea:focus {
+  outline: none !important; border-color: var(--payd-primary) !important;
+  box-shadow: 0 0 0 3px rgb(15 81 50 / .12) !important;
+}
+body.ui-page-health .exercise-sidebar a:hover,
+body.ui-page-health .exercise-sidebar a.active { color: var(--payd-primary) !important; }
+body.ui-page-health .exercise-sidebar a.active { background: rgb(15 81 50 / .10) !important; }
+body.ui-page-health .text-rose-600,
+body.ui-page-health .text-rose-700 { color: var(--payd-primary) !important; }
+body.ui-page-health .bg-rose-600,
+body.ui-page-health .hover\:bg-rose-700:hover { background: var(--payd-primary) !important; }
+body.ui-page-health .border-rose-200 { border-color: var(--payd-border) !important; }
+body.ui-page-notes .composer { background: white !important; }
+body.ui-page-notes .notes-toolbar { gap: 10px; }
+body.ui-page-notes .notes-toolbar input { min-width: 0; }
+body.ui-page-notes .notes-toolbar select { max-width: 220px; }
+@media (max-width: 760px) {
+  body.ui-page-savings .ui-topbar,
+  body.ui-page-notes .topbar,
+  body.ui-page-health .ui-health-header { padding: 22px 16px 0 !important; }
+  body.ui-page-savings .ui-topbar-inner,
+  body.ui-page-notes .topbar .ui-topbar-inner,
+  body.ui-page-health .ui-health-header .ui-topbar-inner { flex-wrap: wrap !important; align-items: flex-start !important; }
+  body.ui-page-savings .app-content > main,
+  body.ui-page-notes .content,
+  body.ui-page-health .exercise-main > main { padding: 20px 16px 36px !important; }
+  body.ui-page-savings .ui-topbar-copy h1,
+  body.ui-page-notes .ui-topbar-copy h1,
+  body.ui-page-health .ui-topbar-copy h1 { font-size: 25px !important; }
+  body.ui-page-savings .ui-header-primary,
+  body.ui-page-notes .ui-header-primary,
+  body.ui-page-health .ui-header-primary { padding: 9px 12px !important; }
+}
+
+
+/* Portal uses the same token system while retaining the colored card headers. */
+body.ui-page-landing { background: var(--payd-page) !important; color: var(--payd-body) !important; }
+body.ui-page-landing .shell { max-width: 1120px !important; }
+body.ui-page-landing .app-card {
+  overflow: hidden !important; background: #fff !important;
+  border: 1px solid var(--payd-border) !important; border-radius: 18px !important;
+  box-shadow: var(--payd-shadow) !important; transition: transform .2s ease, box-shadow .2s ease !important;
+}
+body.ui-page-landing .app-card:hover {
+  transform: translateY(-3px) !important; box-shadow: 0 10px 30px rgb(0 0 0 / .06) !important;
+}
+body.ui-page-landing .app-card .card-head { border: 0 !important; border-radius: 0 !important; padding: 22px 24px !important; }
+body.ui-page-landing .app-card .card-body { background: #fff !important; padding: 22px 24px 24px !important; }
+body.ui-page-landing .app-card .card-body h3 { color: var(--payd-ink) !important; }
+body.ui-page-landing .app-card .card-body p { color: var(--payd-muted) !important; }
+body.ui-page-landing .login-trigger,
+body.ui-page-landing .auth-submit {
+  background: var(--payd-primary) !important; border-color: var(--payd-primary) !important;
+  color: #fff !important; border-radius: 12px !important;
+}
+body.ui-page-landing .login-trigger:hover,
+body.ui-page-landing .auth-submit:hover { background: var(--payd-primary-hover) !important; }
+body.ui-page-landing .auth-modal {
+  background: #fff !important; border: 1px solid var(--payd-border) !important;
+  border-radius: 24px !important; box-shadow: 0 18px 60px rgb(0 0 0 / .12) !important;
+}
+body.ui-page-landing .auth-field input {
+  background: var(--payd-page) !important; border: 1px solid var(--payd-border) !important;
+  border-radius: 12px !important;
+}
+body.ui-page-landing .auth-field input:focus {
+  outline: none !important; border-color: var(--payd-primary) !important;
+  box-shadow: 0 0 0 3px rgb(15 81 50 / .12) !important;
+}
