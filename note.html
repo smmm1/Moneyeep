@@ -98,6 +98,12 @@ body{background-color:#f7f8f4;background-image:radial-gradient(#dce8dd .7px,tran
 .board{border-color:var(--ui-border);border-radius:22px;background-color:rgba(255,255,255,.55);background-image:radial-gradient(#dce8dd .7px,transparent .7px)}
 @media(max-width:760px){.app-layout{display:block}.sidebar{position:relative;height:auto;padding:10px 14px;border-right:0;border-bottom:1px solid var(--ui-border);display:flex;align-items:center;gap:8px;overflow-x:auto}.brand{display:none}.nav-link{white-space:nowrap;margin:0;padding:10px 12px}.topbar{padding:16px}.content{padding:16px}.composer{flex-direction:column}.save-btn{padding:14px 18px}}
 
+    .notes-toolbar{max-width:900px;margin:0 auto 18px;display:flex;gap:10px;align-items:center}
+    .notes-toolbar input,.notes-toolbar select{min-height:42px;padding:9px 12px;font:inherit;font-size:13px;border:1px solid #e7e5dc;border-radius:10px;background:#fffefa;color:#292c26}
+    .notes-toolbar input{flex:1;min-width:0}
+    .notes-toolbar input:focus,.notes-toolbar select:focus{outline:3px solid rgba(105,118,92,.12);border-color:#a8ad9d}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    @media(max-width:760px){.notes-toolbar{gap:7px}.notes-toolbar input,.notes-toolbar select{font-size:12px;min-width:0}.notes-toolbar select{max-width:45%}}
   </style>
 
   <link rel="stylesheet" href="/ui-system.css">
@@ -106,12 +112,12 @@ body{background-color:#f7f8f4;background-image:radial-gradient(#dce8dd .7px,tran
 <body class="ui-page-notes">
 <div class="app-layout">
   <aside class="sidebar">
-    <a class="brand" href="/moneyyeep.html" aria-label="หน้าออมเงิน"><span class="brand-icon"><i class="fa-solid fa-piggy-bank"></i></span><span><b>ออมตัง</b><small>SAVINGS SPACE</small></span></a>
+    <a class="brand" href="/moneyyeep.html" aria-label="หน้าออมเงิน"><span class="brand-icon"><i class="fa-solid fa-layer-group"></i></span><span><b>พื้นที่ของฉัน</b><small>PERSONAL WORKSPACE</small></span></a>
     <a class="nav-link" href="/moneyyeep.html"><i class="fa-solid fa-wallet"></i> ออมเงิน</a>
     <a class="nav-link" href="/excie.html"><i class="fa-solid fa-dumbbell"></i> สุขภาพ &amp; ออกกำลังกาย</a>
-    <a class="nav-link active" href="/note.html" aria-current="page"><i class="fa-regular fa-note-sticky"></i> โน๊ต</a>
+    <a class="nav-link active" href="/note.html" aria-current="page"><i class="fa-regular fa-note-sticky"></i> โน้ต</a>
     <div class="side-label">พื้นที่ของฉัน</div>
-    <p class="side-copy">เข้าถึงการออมเงิน สุขภาพ และโน๊ตได้จากเมนูเดียวกัน</p>
+    <p class="side-copy">เข้าถึงการออมเงิน สุขภาพ และโน้ตได้จากเมนูเดียวกัน</p>
   </aside>
   <main class="main">
     <header class="topbar ui-topbar">
@@ -128,6 +134,15 @@ body{background-color:#f7f8f4;background-image:radial-gradient(#dce8dd .7px,tran
         <textarea id="noteInput" maxlength="10000" rows="1" aria-label="เขียนโน๊ต" placeholder="มีอะไรอยากจดไว้ไหม..."></textarea>
         <button class="save-btn" id="saveBtn" type="submit"><i class="fa-solid fa-plus"></i><span>บันทึก</span></button>
       </form>
+      <div class="notes-toolbar" role="search" aria-label="ค้นหาและกรองโน้ต">
+        <label class="sr-only" for="noteSearch">ค้นหาโน้ต</label>
+        <input id="noteSearch" type="search" placeholder="ค้นหาโน้ต..." autocomplete="off">
+        <label class="sr-only" for="noteFilter">กรองโน้ต</label>
+        <select id="noteFilter">
+          <option value="all">โน้ตทั้งหมด</option>
+          <option value="pinned">เฉพาะที่ปักหมุด</option>
+        </select>
+      </div>
       <div class="board-head"><div class="board-title"><i class="fa-solid fa-thumbtack"></i> กระดานโน๊ต <span id="noteCount">0 โน๊ต</span></div><div class="board-tip"><i class="fa-solid fa-hand-pointer"></i> ลากหัวกระดาษเพื่อย้าย • แตะเพื่อเลือก</div></div>
       <section id="board" class="board" aria-label="กระดานโพสต์อิท">
         <div id="emptyState" class="empty-state"><div><div class="empty-icon"><i class="fa-regular fa-note-sticky"></i></div><strong>กระดานยังว่างอยู่เลย</strong><p>พิมพ์สิ่งที่อยากจำไว้ด้านบน แล้วกดบันทึก<br>โน๊ตของคุณจะมาแปะอยู่ตรงนี้</p></div></div>
@@ -159,6 +174,15 @@ body{background-color:#f7f8f4;background-image:radial-gradient(#dce8dd .7px,tran
   function defaultPosition(index){const width=board.clientWidth||800;const cardWidth=270;const columns=Math.max(1,Math.floor((width-28)/(cardWidth+18)));return {x:14+(index%columns)*(cardWidth+18),y:20+Math.floor(index/columns)*225};}
   function keepInside(x,y,card){const maxX=Math.max(0,board.clientWidth-card.offsetWidth-8);return {x:Math.min(Math.max(0,x),maxX),y:Math.max(0,y)};}
   function sortNotes(){return [...notes].sort((a,b)=>(Number(b.is_pinned)-Number(a.is_pinned))||new Date(b.created_at)-new Date(a.created_at));}
+  function getVisibleNotes(){
+    const query=(document.getElementById('noteSearch')?.value||'').trim().toLocaleLowerCase('th');
+    const filter=document.getElementById('noteFilter')?.value||'all';
+    return sortNotes().filter(note=>{
+      const matchesText=String(note.content||'').toLocaleLowerCase('th').includes(query);
+      const matchesFilter=filter!=='pinned'||Boolean(note.is_pinned);
+      return matchesText&&matchesFilter;
+    });
+  }
   async function loadNotes(){
     const {data,error}=await db.from('finance_notes').select('*').order('created_at',{ascending:false});
     if(error){showToast('โหลดโน๊ตไม่สำเร็จ กรุณาลองใหม่');console.error(error);return;}
@@ -167,9 +191,14 @@ body{background-color:#f7f8f4;background-image:radial-gradient(#dce8dd .7px,tran
   }
   function renderNotes(){
     board.querySelectorAll('.sticky-note').forEach(el=>el.remove());
-    document.getElementById('emptyState').style.display=notes.length?'none':'flex';
-    document.getElementById('noteCount').textContent=notes.length+' โน๊ต';
-    sortNotes().forEach((note,index)=>{
+    const visibleNotes=getVisibleNotes();
+    const emptyState=document.getElementById('emptyState');
+    emptyState.style.display=visibleNotes.length?'none':'flex';
+    const emptyTitle=emptyState.querySelector('strong'),emptyCopy=emptyState.querySelector('p');
+    if(emptyTitle)emptyTitle.textContent=notes.length?'ไม่พบโน้ตที่ตรงกัน':'กระดานยังว่างอยู่เลย';
+    if(emptyCopy)emptyCopy.innerHTML=notes.length?'ลองเปลี่ยนคำค้นหาหรือตัวกรองดูนะ':'พิมพ์สิ่งที่อยากจำไว้ด้านบน แล้วกดบันทึก<br>โน้ตของคุณจะมาแปะอยู่ตรงนี้';
+    document.getElementById('noteCount').textContent=(visibleNotes.length===notes.length?notes.length:(visibleNotes.length+' / '+notes.length))+' โน้ต';
+    visibleNotes.forEach((note,index)=>{
       const el=document.createElement('article');el.className='sticky-note'+(note.id===selectedId?' selected':'')+(note.is_pinned?' pinned':'');
       el.dataset.id=note.id;el.style.left=(note._x??defaultPosition(index).x)+'px';el.style.top=(note._y??defaultPosition(index).y)+'px';el.style.zIndex=note._z||10;el.style.setProperty('--tilt',note.rotation+'deg');el.style.background=colors[index%colors.length];
       const editing=note._editing===true;
@@ -190,7 +219,6 @@ body{background-color:#f7f8f4;background-image:radial-gradient(#dce8dd .7px,tran
       if(editing){const textEl=el.querySelector('.note-text');textEl.focus();const range=document.createRange();range.selectNodeContents(textEl);range.collapse(false);const sel=window.getSelection();sel.removeAllRanges();sel.addRange(range);}
     });
     const maxBottom=notes.reduce((m,n)=>Math.max(m,(n._y||0)+210),520);board.style.minHeight=maxBottom+'px';
-    document.getElementById('noteCount').textContent=notes.length+' โน๊ต';
   }
   function selectNote(id){selectedId=id;const note=notes.find(n=>n.id===id);if(note){note._z=++highestZ;document.querySelectorAll('.sticky-note').forEach(el=>el.classList.toggle('selected',el.dataset.id===id));if(note){const el=board.querySelector('[data-id="'+CSS.escape(id)+'"]');if(el)el.style.zIndex=note._z;}}}
   let drag=null;
@@ -224,6 +252,8 @@ body{background-color:#f7f8f4;background-image:radial-gradient(#dce8dd .7px,tran
   async function deleteNote(id){if(!confirm('ลบโพสต์อิทนี้ใช่ไหม? ลบแล้วจะกู้คืนไม่ได้'))return;const {error}=await db.from('finance_notes').delete().eq('id',id);if(error){showToast('ลบไม่สำเร็จ กรุณาลองใหม่');return;}notes=notes.filter(n=>n.id!==id);if(selectedId===id)selectedId=null;renderNotes();showToast('ลบโน๊ตแล้ว');}
   document.getElementById('composer').addEventListener('submit',async e=>{e.preventDefault();const content=input.value.trim();if(!content){input.focus();showToast('เขียนอะไรสักนิดก่อนบันทึกนะ');return;}if(!currentUser){showToast('เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่');return;}saveBtn.disabled=true;saveBtn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i><span>กำลังบันทึก…</span>';try{await createNote(content);}catch(err){console.error('Save note exception:',err);showToast('บันทึกไม่สำเร็จ: '+(err?.message||'เกิดข้อผิดพลาด'));}finally{saveBtn.disabled=false;saveBtn.innerHTML='<i class="fa-solid fa-plus"></i><span>บันทึก</span>';}});
   input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,240)+'px';});
+  document.getElementById('noteSearch').addEventListener('input',renderNotes);
+  document.getElementById('noteFilter').addEventListener('change',renderNotes);
   document.getElementById('signoutBtn').addEventListener('click',async()=>{await db.auth.signOut();location.href='/';});
   board.addEventListener('click',e=>{if(e.target===board){selectedId=null;document.querySelectorAll('.sticky-note').forEach(el=>el.classList.remove('selected'));}});
   async function init(){

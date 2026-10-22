@@ -585,7 +585,7 @@ button:not(.unstyled),select,input,textarea{border-radius:12px}
 
     // Sound effects: lightweight Web Audio tones, no audio files or extra dependencies.
     let soundContext = null;
-    let soundEnabled = true;
+    let soundEnabled = false;
     function playSoundTone(frequency, duration, volume, delay=0) {
       if (!soundEnabled) return;
       try {
