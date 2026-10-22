@@ -39,11 +39,10 @@ function redesign(){
     commonNav('notes');
     var main=document.querySelector('.main'),content=document.querySelector('.content'),composer=document.getElementById('composer'),board=document.getElementById('board');
     if(main)main.classList.add('redesign-notes-main');
-    if(content)content.classList.add('redesign-notes-content');
-    addHeading(content,'NOTES / CAPTURE','พื้นที่สำหรับความคิดของคุณ','จดสิ่งสำคัญไว้ก่อน แล้วกลับมาจัดการเมื่อพร้อม','');
-    if(composer&&!composer.parentElement.classList.contains('redesign-compose-panel')){var wrap=el('section','redesign-compose-panel','<div class="redesign-panel-kicker">QUICK CAPTURE</div><h2>มีอะไรอยากจำไว้?</h2><p>เริ่มด้วยประโยคสั้น ๆ ก็ได้</p>');composer.parentNode.insertBefore(wrap,composer);wrap.appendChild(composer);composer.classList.add('redesign-composer');}
-    var boardHead=document.querySelector('.board-head');if(boardHead)boardHead.classList.add('redesign-board-heading');
-    if(board)board.classList.add('redesign-notes-board');
+    if(content)content.classList.add('redesign-notes-simple');
+    if(composer)composer.classList.add('redesign-composer-simple');
+    var boardHead=document.querySelector('.board-head');if(boardHead)boardHead.classList.add('redesign-board-heading-simple');
+    if(board)board.classList.add('redesign-notes-board-simple');
     return;
   }
   if(body.classList.contains('ui-page-health')){
@@ -53,7 +52,7 @@ function redesign(){
     if(main)main.classList.add('redesign-health-main');
     if(header){header.classList.add('redesign-health-header');var banner=header.querySelector(':scope > div.mt-5');if(banner)banner.classList.add('redesign-health-hero');}
     if(content){content.classList.add('redesign-health-grid');var profile=content.querySelector(':scope > .exercise-wide');if(profile)profile.classList.add('redesign-profile-panel');}
-    addHeading(main,'HEALTH / TRACKING','ดูแลตัวเองทีละวัน','เก็บข้อมูลสุขภาพและติดตามความสม่ำเสมอของคุณอย่างเป็นระบบ','');
+    var obsoleteHeading=main&&main.querySelector(':scope > .redesign-page-heading');if(obsoleteHeading)obsoleteHeading.remove();
   }
 }
 
