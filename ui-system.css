@@ -924,3 +924,148 @@ body.ui-page-health .exercise-main>header.ui-health-header>.redesign-health-hero
   body.ui-page-health .ui-health-topbar-shell>.ui-topbar-inner {min-height:44px!important;gap:8px!important}
   body.ui-page-health .exercise-main>header.ui-health-header>.redesign-health-hero {margin:14px 16px 0!important}
 }
+
+
+/* Final shared workspace contract: all work pages share the savings-page frame.
+   Only the page content and its accent token may vary. */
+body.ui-page-savings,
+body.ui-page-notes,
+body.ui-page-health {
+  --workspace-accent: #47745f;
+  --workspace-accent-soft: #edf4ef;
+  --workspace-ink: #242a25;
+  --workspace-muted: #777e77;
+  --workspace-line: #e7e8e1;
+  --workspace-surface: #fffefa;
+  background: #f8f8f4 !important;
+  color: var(--workspace-ink) !important;
+}
+body.ui-page-notes { --workspace-accent: #b58a35; --workspace-accent-soft: #faf3df; }
+body.ui-page-health { --workspace-accent: #bd6b69; --workspace-accent-soft: #faeeee; }
+
+body.ui-page-savings .redesign-sidebar,
+body.ui-page-notes .redesign-sidebar,
+body.ui-page-health .redesign-sidebar {
+  position: sticky !important;
+  top: 0 !important;
+  align-self: stretch !important;
+  width: 244px !important;
+  min-width: 244px !important;
+  height: 100vh !important;
+  min-height: 100vh !important;
+  overflow-y: auto !important;
+  border: 0 !important;
+  border-right: 1px solid var(--workspace-line) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: var(--workspace-surface) !important;
+}
+body.ui-page-savings .redesign-app-layout,
+body.ui-page-notes .redesign-app-layout,
+body.ui-page-health .redesign-app-layout {
+  display: grid !important;
+  grid-template-columns: 244px minmax(0, 1fr) !important;
+  gap: 0 !important;
+  width: 100% !important;
+  min-height: 100vh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  align-items: stretch !important;
+}
+body.ui-page-savings .redesign-sidebar .is-active,
+body.ui-page-notes .redesign-sidebar .is-active,
+body.ui-page-health .redesign-sidebar .is-active {
+  color: var(--workspace-accent) !important;
+  background: var(--workspace-accent-soft) !important;
+}
+body.ui-page-savings .redesign-sidebar .redesign-nav-icon,
+body.ui-page-notes .redesign-sidebar .redesign-nav-icon,
+body.ui-page-health .redesign-sidebar .redesign-nav-icon {
+  color: var(--workspace-accent) !important;
+}
+body.ui-page-savings .app-content > header.ui-topbar,
+body.ui-page-notes .main > header.ui-topbar,
+body.ui-page-health .exercise-main > .ui-health-topbar-shell {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 60 !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-height: 64px !important;
+  margin: 0 !important;
+  padding: 8px clamp(16px, 3vw, 32px) !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--workspace-line) !important;
+  border-radius: 0 !important;
+  background: rgba(255, 254, 250, .96) !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+}
+body.ui-page-savings .app-content > header.ui-topbar > .ui-topbar-inner,
+body.ui-page-notes .main > header.ui-topbar > .ui-topbar-inner,
+body.ui-page-health .exercise-main > .ui-health-topbar-shell > .ui-topbar-inner {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 14px !important;
+  width: 100% !important;
+  max-width: 1152px !important;
+  min-height: 48px !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+body.ui-page-savings .redesign-main,
+body.ui-page-notes .redesign-notes-simple,
+body.ui-page-health .exercise-main > main.exercise-shell {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 1152px !important;
+  min-width: 0 !important;
+  margin: 0 auto !important;
+  padding: 30px clamp(22px, 4vw, 58px) 70px !important;
+  background: transparent !important;
+}
+body.ui-page-savings .redesign-page-heading,
+body.ui-page-notes .redesign-page-heading {
+  color: var(--workspace-ink) !important;
+}
+body.ui-page-savings .redesign-page-heading h1,
+body.ui-page-notes .redesign-page-heading h1 {
+  letter-spacing: -.035em !important;
+}
+body.ui-page-savings .redesign-kicker,
+body.ui-page-notes .redesign-kicker {
+  color: var(--workspace-accent) !important;
+}
+body.ui-page-savings .redesign-primary-action,
+body.ui-page-notes .redesign-primary-action,
+body.ui-page-health .redesign-primary-action {
+  background: var(--workspace-accent) !important;
+}
+@media (max-width: 760px) {
+  body.ui-page-savings .redesign-app-layout,
+  body.ui-page-notes .redesign-app-layout,
+  body.ui-page-health .redesign-app-layout {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  body.ui-page-savings .redesign-sidebar,
+  body.ui-page-notes .redesign-sidebar,
+  body.ui-page-health .redesign-sidebar {
+    position: relative !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    border-right: 0 !important;
+    border-bottom: 1px solid var(--workspace-line) !important;
+  }
+  body.ui-page-savings .redesign-main,
+  body.ui-page-notes .redesign-notes-simple,
+  body.ui-page-health .exercise-main > main.exercise-shell {
+    padding: 22px 16px 48px !important;
+  }
+}
