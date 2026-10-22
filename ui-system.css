@@ -1163,3 +1163,53 @@ body.ui-page-health button.ui-topbar-action:disabled {
     font-size: 14px !important;
   }
 }
+
+
+/* Shared topbar controls: logout should look and behave consistently on every workspace page. */
+body.ui-page-savings .app-content > header.ui-topbar button[onclick="signOut()"],
+body.ui-page-notes .main > header.ui-topbar #signoutBtn,
+body.ui-page-health .exercise-main > .ui-health-topbar-shell button.ui-topbar-action {
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  min-height: 38px !important;
+  padding: 8px 12px !important;
+  border: 1px solid var(--workspace-line) !important;
+  border-radius: 11px !important;
+  background: var(--workspace-surface) !important;
+  color: var(--workspace-muted) !important;
+  box-shadow: none !important;
+  font-family: inherit !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+}
+body.ui-page-savings .app-content > header.ui-topbar button[onclick="signOut()"]:hover,
+body.ui-page-notes .main > header.ui-topbar #signoutBtn:hover,
+body.ui-page-health .exercise-main > .ui-health-topbar-shell button.ui-topbar-action:hover {
+  border-color: var(--workspace-accent) !important;
+  background: var(--workspace-accent-soft) !important;
+  color: var(--workspace-accent) !important;
+}
+body.ui-page-health .exercise-main > header.ui-health-header {
+  padding: 0 !important;
+}
+body.ui-page-health .exercise-main > header.ui-health-header > .redesign-health-hero {
+  box-sizing: border-box !important;
+  width: calc(100% - 32px) !important;
+}
+@media (min-width: 761px) {
+  body.ui-page-health .exercise-main > header.ui-health-header > .redesign-health-hero {
+    width: calc(100% - clamp(44px, 8vw, 116px)) !important;
+  }
+}
+@media (max-width: 760px) {
+  body.ui-page-health .exercise-main > header.ui-health-header > .redesign-health-hero {
+    width: auto !important;
+    margin: 14px 16px 0 !important;
+  }
+}
