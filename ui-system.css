@@ -241,3 +241,66 @@ body.ui-page-health .ui-health-header>div.mt-5.rounded-3xl{max-width:1280px!impo
  body.ui-page-savings .ui-topbar h1,body.ui-page-notes .ui-topbar h1,body.ui-page-health .ui-topbar h1{font-size:15px!important}
  body.ui-page-savings .ui-topbar p,body.ui-page-notes .ui-topbar .subhead,body.ui-page-health .ui-topbar-subtitle{max-width:52vw!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
 }
+
+
+
+/* MONEEYEP DESIGN SYSTEM 2.0 — quiet luxury, shared across every page */
+:root{--ui-ink:#292c26;--ui-muted:#777b72;--ui-line:#e7e5dc;--ui-page:#f7f6f2;--ui-card:#fffefa;--ui-input:#fbfaf6;--ui-radius:16px;--ui-radius-sm:10px;--ui-shadow:0 5px 22px rgba(37,41,35,.045);--ui-accent:#69765c;--ui-accent-strong:#4f5d43;--ui-accent-soft:#f0f2eb;--ui-accent-line:#dce2d3;--ui-space-1:4px;--ui-space-2:8px;--ui-space-3:12px;--ui-space-4:16px;--ui-space-5:20px;--ui-space-6:24px}
+body.ui-page-savings,body.ui-page-health,body.ui-page-notes,body.ui-page-landing{color:var(--ui-ink)!important;background:var(--ui-page)!important;background-image:none!important;font-family:"Sarabun","Plus Jakarta Sans","IBM Plex Sans Thai",sans-serif!important;-webkit-font-smoothing:antialiased}
+body.ui-page-savings *,body.ui-page-health *,body.ui-page-notes *,body.ui-page-landing *{box-sizing:border-box}
+body.ui-page-savings ::selection,body.ui-page-health ::selection,body.ui-page-notes ::selection,body.ui-page-landing ::selection{background:#e5e9df;color:#30382c}
+body.ui-page-savings :focus-visible,body.ui-page-health :focus-visible,body.ui-page-notes :focus-visible,body.ui-page-landing :focus-visible{outline:3px solid #a9b69b!important;outline-offset:2px!important}
+body.ui-page-savings .cream-card,body.ui-page-health .cream-card{background:var(--ui-card)!important;border:1px solid var(--ui-line)!important;border-radius:var(--ui-radius)!important;box-shadow:var(--ui-shadow)!important;backdrop-filter:none!important}
+body.ui-page-savings .cream-input,body.ui-page-health .cream-input,body.ui-page-savings input:not([type=checkbox]):not([type=radio]):not([type=range]),body.ui-page-health input:not([type=checkbox]):not([type=radio]):not([type=range]),body.ui-page-savings select,body.ui-page-health select,body.ui-page-savings textarea,body.ui-page-health textarea,body.ui-page-notes input,body.ui-page-notes textarea,body.ui-page-notes select{border-color:var(--ui-line)!important;border-radius:10px!important;background:var(--ui-input)!important;color:var(--ui-ink)!important;box-shadow:none!important}
+body.ui-page-savings .cream-input:focus,body.ui-page-health .cream-input:focus,body.ui-page-savings input:focus,body.ui-page-health input:focus,body.ui-page-notes input:focus,body.ui-page-notes textarea:focus{border-color:#aab69e!important;box-shadow:0 0 0 3px #e9ede4!important}
+body.ui-page-savings button,body.ui-page-health button,body.ui-page-notes button{transition:background-color .16s ease,border-color .16s ease,color .16s ease,box-shadow .16s ease,transform .16s ease}
+body.ui-page-savings .app-content main,body.ui-page-health .exercise-main main,body.ui-page-notes .content{background:transparent!important}
+body.ui-page-savings .app-content main>*,body.ui-page-health .exercise-main main>*{scroll-margin-top:20px}
+body.ui-page-savings .app-content main .rounded-2xl,body.ui-page-savings .app-content main .rounded-3xl,body.ui-page-health .exercise-main main .rounded-2xl,body.ui-page-health .exercise-main main .rounded-3xl{box-shadow:0 3px 16px rgba(37,41,35,.035)!important}
+body.ui-page-savings .app-content main .shadow,body.ui-page-savings .app-content main .shadow-lg,body.ui-page-savings .app-content main .shadow-xl,body.ui-page-health .exercise-main main .shadow,body.ui-page-health .exercise-main main .shadow-lg,body.ui-page-health .exercise-main main .shadow-xl{box-shadow:var(--ui-shadow)!important}
+body.ui-page-savings .app-content main button,body.ui-page-health .exercise-main main button,body.ui-page-notes .save-btn{border-radius:10px!important;letter-spacing:0!important}
+body.ui-page-savings .app-content main button[class*=bg-emerald],body.ui-page-health .exercise-main main button[class*=bg-emerald],body.ui-page-savings .app-content main .bg-emerald-600,body.ui-page-health .exercise-main main .bg-emerald-600{background:#69765c!important;border-color:#69765c!important;color:#fff!important;box-shadow:none!important}
+body.ui-page-savings .app-content main button[class*=bg-emerald]:hover,body.ui-page-health .exercise-main main button[class*=bg-emerald]:hover{background:#4f5d43!important}
+body.ui-page-savings .app-content main [class*=text-emerald-],body.ui-page-health .exercise-main main [class*=text-rose-],body.ui-page-health .exercise-main main [class*=text-emerald-]{color:#65745a!important}
+body.ui-page-savings .app-content main [class*=bg-emerald-50],body.ui-page-health .exercise-main main [class*=bg-rose-50],body.ui-page-health .exercise-main main [class*=bg-emerald-50]{background:#f0f2eb!important}
+body.ui-page-savings .app-content main [class*=border-emerald-],body.ui-page-health .exercise-main main [class*=border-rose-],body.ui-page-health .exercise-main main [class*=border-emerald-]{border-color:#dce2d3!important}
+body.ui-page-notes .topbar{background:#fffefa!important}
+body.ui-page-notes .content{max-width:1360px!important}
+body.ui-page-notes .composer{border:1px solid var(--ui-line)!important;border-radius:16px!important;box-shadow:var(--ui-shadow)!important}
+body.ui-page-notes .save-btn{background:#69765c!important;color:#fff!important;border-radius:0 14px 14px 0!important}
+body.ui-page-notes .save-btn:hover{background:#4f5d43!important}
+body.ui-page-notes .board{background-color:#f3f2ed!important;background-image:none!important;border:1px solid var(--ui-line)!important;border-radius:18px!important}
+body.ui-page-notes .sticky-note{border:1px solid #e5e1d4!important;border-radius:12px!important;box-shadow:0 6px 18px rgba(37,41,35,.08)!important}
+body.ui-page-notes .sticky-note:before{height:4px!important;background:#dce2d3!important}
+body.ui-page-notes .sticky-note.selected{box-shadow:0 0 0 2px #aab69e,0 12px 28px rgba(37,41,35,.12)!important}
+body.ui-page-notes .note-text{color:#41443c!important}
+body.ui-page-notes .empty-state .empty-icon{background:#f0f2eb!important;color:#69765c!important}
+body.ui-page-notes .empty-state strong{color:#626b58!important}
+body.ui-page-landing .shell{width:min(100% - 48px,1120px)!important;padding-top:34px!important}
+body.ui-page-landing .top{margin-bottom:64px!important}
+body.ui-page-landing .brandmark{border-radius:12px!important;background:#f0f2eb!important;border-color:#e2e5dc!important;color:#4f5d43!important}
+body.ui-page-landing .intro h1{font-weight:650!important;letter-spacing:-1.1px!important;color:var(--ui-ink)!important}
+body.ui-page-landing .app-card{border-color:var(--ui-line)!important;border-radius:18px!important;box-shadow:none!important;background:var(--ui-card)!important}
+body.ui-page-landing .app-card:hover{transform:translateY(-2px)!important;border-color:#d4d9ce!important;box-shadow:var(--ui-shadow)!important}
+body.ui-page-landing .card-head{background:#f0f2eb!important;color:#58664d!important}
+body.ui-page-landing .notes .card-head,body.ui-page-landing .health .card-head{background:#f2f0eb!important;color:#686b60!important}
+body.ui-page-landing .card-body h3{font-weight:650!important}
+body.ui-page-landing .login-trigger{border-radius:10px!important;border-color:var(--ui-line)!important;color:#4f5d43!important}
+body.ui-page-landing .login-trigger:hover{background:#f0f2eb!important}
+body.ui-page-landing .auth-modal{border-radius:18px!important;box-shadow:0 18px 55px rgba(37,41,35,.12)!important}
+body.ui-page-landing .auth-submit{background:#69765c!important;border-radius:10px!important}
+body.ui-page-landing .auth-submit:hover{background:#4f5d43!important}
+body.ui-page-landing .auth-field input{border-radius:10px!important;border-color:var(--ui-line)!important}
+body.ui-page-savings .auth-layout{border-radius:22px!important;box-shadow:0 18px 56px rgba(37,41,35,.09)!important;border-color:var(--ui-line)!important}
+body.ui-page-savings .auth-screen{background:#f7f6f2!important}
+body.ui-page-savings .auth-welcome{background:#eef0e8!important}
+body.ui-page-savings .auth-orb{display:none!important}
+body.ui-page-savings .auth-piggy{box-shadow:none!important;background:rgba(255,255,255,.55)!important}
+body.ui-page-savings .auth-piggy img{animation:none!important}
+body.ui-page-savings .auth-floating-note{box-shadow:0 5px 18px rgba(37,41,35,.06)!important;border-color:var(--ui-line)!important}
+#uiSoundToggle{position:fixed;right:18px;bottom:18px;z-index:9999;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:38px;padding:9px 12px;border:1px solid #e2e2d9;border-radius:999px;background:rgba(255,254,250,.96);color:#62695d;font:600 11px "Sarabun","Plus Jakarta Sans",sans-serif;box-shadow:0 5px 18px rgba(37,41,35,.07);cursor:pointer;backdrop-filter:blur(10px)}
+#uiSoundToggle:hover{background:#f0f2eb;color:#4f5d43}
+#uiSoundToggle:focus-visible{outline:3px solid #a9b69b;outline-offset:3px}
+#uiSoundToggle[aria-pressed=true]{background:#e9ede4;border-color:#cfd8c6;color:#4f5d43}
+@media(max-width:760px){body.ui-page-landing .shell{width:calc(100% - 32px)!important;padding-top:22px!important}body.ui-page-landing .top{margin-bottom:42px!important}body.ui-page-landing .section{margin-top:36px!important}#uiSoundToggle{right:12px;bottom:12px;min-height:36px;padding:8px 10px}}
+@media(prefers-reduced-motion:reduce){body.ui-page-savings *,body.ui-page-health *,body.ui-page-notes *,body.ui-page-landing *{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}
