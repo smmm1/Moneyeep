@@ -329,7 +329,7 @@ async function bootExcelsior(){
   const {data,error}=await db.auth.getSession();
   if(error){document.getElementById('authNotice').classList.remove('hidden');document.getElementById('authNotice').insertAdjacentHTML('beforeend','<p class="text-xs text-rose-600 mt-2">ตรวจสอบเซสชันไม่สำเร็จ กรุณาเข้าสู่ระบบใหม่</p>');return;}
   currentUser=data.session?.user||null;
-  if(!currentUser){document.getElementById('authNotice').classList.remove('hidden');return;}
+  if(!currentUser){location.replace('/?login=1&next=./excie.html');return;}
   document.getElementById('exerciseApp').classList.remove('hidden');
   await loadExerciseData();
   document.getElementById('exerciseLoading').classList.add('hidden');
