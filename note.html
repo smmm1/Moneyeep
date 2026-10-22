@@ -225,7 +225,7 @@ body{background-color:#f7f8f4;background-image:radial-gradient(#dce8dd .7px,tran
   board.addEventListener('click',e=>{if(e.target===board){selectedId=null;document.querySelectorAll('.sticky-note').forEach(el=>el.classList.remove('selected'));}});
   async function init(){
     const {data,error}=await db.auth.getSession();
-    if(error||!data.session){document.querySelector('.content').innerHTML='<div style="max-width:500px;margin:70px auto;text-align:center;padding:32px 20px;background:#fff;border:1px solid #f1ead6;border-radius:24px"><div style="font-size:34px;color:#d3bc72;margin-bottom:14px"><i class="fa-solid fa-lock"></i></div><h2 style="font-size:19px;font-weight:800;margin:0 0 8px">เข้าสู่ระบบก่อนใช้งานโน๊ต</h2><p style="font-size:13px;line-height:1.8;color:#a49a76;margin:0 0 20px">โน๊ตของคุณจะถูกเก็บในฐานข้อมูลส่วนตัว และมีเพียงบัญชีของคุณที่เข้าถึงได้</p><a href="/" style="display:inline-block;padding:11px 18px;border-radius:12px;background:#e7d58f;color:#58440a;font-size:13px;font-weight:800;text-decoration:none">ไปหน้าเข้าสู่ระบบ</a></div>';document.getElementById('signoutBtn').style.display='none';return;}
+    if(error||!data.session){location.replace('/?login=1&next=./note.html');return;}
     currentUser=data.session.user;await loadNotes();
     db.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'||!session)location.href='/';});
   }
