@@ -262,7 +262,7 @@ button:not(.unstyled),select,input,textarea{border-radius:12px}
     <a href="/" class="side-brand !mt-0 !mb-7 !px-2"><span class="grid place-items-center w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-700"><i class="fa-solid fa-piggy-bank"></i></span><span><b class="block text-base text-gray-800">ออมตัง</b><small class="text-[10px] text-gray-400">SAVINGS SPACE</small></span></a>
     <a href="./moneyyeep.html" class="active" aria-current="page"><i class="fa-solid fa-wallet w-5 text-center"></i> ออมเงิน</a>
     <a href="/excie.html"><i class="fa-solid fa-dumbbell w-5 text-center"></i> สุขภาพ &amp; ออกกำลังกาย</a>
-    <a href="/note.html"><i class="fa-regular fa-note-sticky w-5 text-center"></i> โน๊ต</a>
+    <a href="/note.html"><i class="fa-regular fa-note-sticky w-5 text-center"></i> โน้ต</a>
     <div class="mt-8 px-3 text-[10px] uppercase tracking-widest font-extrabold text-gray-400">SAVINGS</div>
     <p class="px-3 mt-2 text-xs leading-6 text-gray-400">ดูยอดเงิน รายรับรายจ่าย และเป้าหมายการออมของคุณ</p>
   </aside>
@@ -280,6 +280,7 @@ button:not(.unstyled),select,input,textarea{border-radius:12px}
         </div>
       </div>
       <div class="flex gap-2">
+        <button type="button" class="ui-header-primary" onclick="openAddModal()"><i class="fa-solid fa-plus"></i><span>เพิ่มรายการ</span></button>
         <button onclick="signOut()" class="text-xs text-gray-600 bg-gray-50 hover:bg-gray-100 px-3 py-1.5 rounded-xl border border-gray-200 transition-all font-medium">ออกจากระบบ</button>
         <button onclick="clearAllData()" class="text-xs text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 px-3 py-1.5 rounded-xl border border-rose-200 transition-all font-medium">
           <i class="fa-solid fa-rotate-left"></i> <span class="hidden sm:inline">รีเซ็ต</span>
